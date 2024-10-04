@@ -18,6 +18,26 @@ jobs:
         with:
           node-version: '18'  # Ajusta la versión según sea necesario
 
+      # Check the project structure
+      - name: Check project structure
+        run: ls -R
+
+      # Ensure platforms directory exists
+      - name: Check platforms directory
+        run: |
+          if [ ! -d "platforms" ]; then
+            echo "Platforms directory does not exist. Please add iOS platform first."
+            exit 1
+          fi
+
+      # Ensure iOS platform exists
+      - name: Check iOS platform directory
+        run: |
+          if [ ! -d "platforms/ios" ]; then
+            echo "iOS platform directory does not exist. Please add iOS platform first."
+            exit 1
+          fi
+
       # Install CocoaPods dependencies for iOS
       - name: Install CocoaPods
         run: pod install --project-directory=platforms/ios
