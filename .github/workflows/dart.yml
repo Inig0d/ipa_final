@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Puedes ajustar la versión según sea necesario
+          node-version: '18'  # Ajusta la versión según sea necesario
 
       # Install Cordova globally
       - name: Install Cordova
@@ -32,15 +32,17 @@ jobs:
         run: cordova platform add ios
         working-directory: ./  # Asegúrate de estar en la raíz del proyecto
 
-      # Check if Podfile exists and install CocoaPods dependencies
-      - name: Check for Podfile and Install CocoaPods
+      # Verify if Podfile exists
+      - name: Verify Podfile exists
         run: |
-          if [ -f platforms/ios/Podfile ]; then
-            pod install --project-directory=platforms/ios
-          else
-            echo "Podfile not found. Please check if the iOS platform was added successfully."
+          if [ ! -f platforms/ios/Podfile ]; then
+            echo "Podfile not found. Something went wrong when adding the iOS platform."
             exit 1
           fi
+
+      # Install CocoaPods dependencies for iOS
+      - name: Install CocoaPods
+        run: pod install --project-directory=platforms/ios
 
       # Build the Cordova iOS app
       - name: Build iOS app
