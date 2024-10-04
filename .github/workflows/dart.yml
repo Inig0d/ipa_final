@@ -27,6 +27,10 @@ jobs:
         run: npm install
         working-directory: ./  # Asegúrate de estar en la raíz del proyecto
 
+      # List project directory for debugging
+      - name: List project directory
+        run: ls -R .
+
       # Add iOS platform
       - name: Add iOS platform
         run: |
@@ -36,7 +40,7 @@ jobs:
       - name: Check for Podfile
         run: |
           if [ -f platforms/ios/Podfile ]; then
-            echo "Podfile found, proceeding to install CocoaPods."
+            echo "Podfile found."
           else
             echo "Podfile not found. Something went wrong when adding the iOS platform."
             exit 1
@@ -75,3 +79,4 @@ jobs:
           tag: v1.0
           overwrite: true
           body: "This is the first release"
+
