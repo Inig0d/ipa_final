@@ -32,9 +32,15 @@ jobs:
         run: cordova platform add ios
         working-directory: ./  # Asegúrate de estar en la raíz del proyecto
 
-      # Install CocoaPods dependencies for iOS
-      - name: Install CocoaPods
-        run: pod install --project-directory=./platforms/ios
+      # Check if Podfile exists and install CocoaPods dependencies
+      - name: Check for Podfile and Install CocoaPods
+        run: |
+          if [ -f platforms/ios/Podfile ]; then
+            pod install --project-directory=platforms/ios
+          else
+            echo "Podfile not found. Please check if the iOS platform was added successfully."
+            exit 1
+          fi
 
       # Build the Cordova iOS app
       - name: Build iOS app
@@ -48,7 +54,7 @@ jobs:
 
       # Move the app into the Payload directory
       - name: Move app to Payload
-        run: mv HelloCordova.app/ Payload  # Cambia "MyApp" por el nombre de tu app
+        run: mv HelloCordova.app/ Payload  # Cambia "HelloCordova" por el nombre de tu app
         working-directory: platforms/ios/build/device
 
       # Zip the output
