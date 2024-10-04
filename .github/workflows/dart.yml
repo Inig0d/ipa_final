@@ -1,0 +1,82 @@
+name: iOS-ipa-build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    name: 🎉 iOS Cordova Build
+    runs-on: macos-latest
+    steps:
+      # Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Node.js (needed for Cordova)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Ajusta la versión según sea necesario
+
+      # Install Cordova globally
+      - name: Install Cordova
+        run: npm install -g cordova
+
+      # Install dependencies (if you have a package.json file)
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./  # Asegúrate de estar en la raíz del proyecto
+
+      # List project directory for debugging
+      - name: List project directory
+        run: ls -R .
+
+      # Add iOS platform
+      - name: Add iOS platform
+        run: |
+          cordova platform add ios || { echo "Failed to add iOS platform"; exit 1; }
+
+      # Check if Podfile exists after adding iOS platform
+      - name: Check for Podfile
+        run: |
+          if [ -f platforms/ios/Podfile ]; then
+            echo "Podfile found."
+          else
+            echo "Podfile not found. Something went wrong when adding the iOS platform."
+            exit 1
+          fi
+
+      # Install CocoaPods dependencies for iOS
+      - name: Install CocoaPods
+        run: pod install --project-directory=platforms/ios
+
+      # Build the Cordova iOS app
+      - name: Build iOS app
+        run: cordova build ios --release --device --no-build-config
+        working-directory: ./  # Asegúrate de estar en la raíz del proyecto
+
+      # Prepare Payload directory
+      - name: Prepare Payload directory
+        run: mkdir Payload
+        working-directory: platforms/ios/build/device
+
+      # Move the app into the Payload directory
+      - name: Move app to Payload
+        run: mv HelloCordova.app/ Payload  # Cambia "HelloCordova" por el nombre de tu app
+        working-directory: platforms/ios/build/device
+
+      # Zip the output
+      - name: Zip output
+        run: zip -qq -r -9 CordovaIpaExport.ipa Payload
+        working-directory: platforms/ios/build/device
+
+      # Upload binaries to release
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: platforms/ios/build/device/CordovaIpaExport.ipa
+          tag: v1.0
+          overwrite: true
+          body: "This is the first release"
+
