@@ -27,26 +27,24 @@ jobs:
         run: npm install
         working-directory: ./  # Asegúrate de estar en la raíz del proyecto
 
-      # Check if iOS platform is already added
-      - name: Check for iOS platform
-        id: check_ios
+      # Add iOS platform
+      - name: Add iOS platform
         run: |
-          if ! cordova platform ls | grep -q ios; then
-            echo "iOS platform not found, adding..."
-            cordova platform add ios
-          else
-            echo "iOS platform already added."
-          fi
+          cordova platform add ios || { echo "Failed to add iOS platform"; exit 1; }
 
-      # Install CocoaPods dependencies for iOS
-      - name: Install CocoaPods
+      # Check if Podfile exists after adding iOS platform
+      - name: Check for Podfile
         run: |
           if [ -f platforms/ios/Podfile ]; then
-            pod install --project-directory=platforms/ios
+            echo "Podfile found, proceeding to install CocoaPods."
           else
             echo "Podfile not found. Something went wrong when adding the iOS platform."
             exit 1
           fi
+
+      # Install CocoaPods dependencies for iOS
+      - name: Install CocoaPods
+        run: pod install --project-directory=platforms/ios
 
       # Build the Cordova iOS app
       - name: Build iOS app
