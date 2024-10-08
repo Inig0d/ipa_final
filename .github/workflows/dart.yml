@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '18'  # Ajusta la versión según sea necesario
 
       # Install Cordova globally
       - name: Install Cordova
@@ -47,39 +47,14 @@ jobs:
             echo "Podfile found, continuing..."
           fi
 
-      # ** Update iOS deployment target to 12.0 or higher **
-      - name: Update deployment target to 12.0
-        run: sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = 11.0/IPHONEOS_DEPLOYMENT_TARGET = 12.0/g' platforms/ios/HelloCordova.xcodeproj/project.pbxproj
-
-      # ** Update Xcode project with Development Team ID (signing) **
-      - name: Set Development Team ID for signing
-        run: |
-          sed -i '' "s/DEVELOPMENT_TEAM = \".*\";/DEVELOPMENT_TEAM = \"${{ secrets.DEV_TEAM_ID }}\";/g" platforms/ios/HelloCordova.xcodeproj/project.pbxproj
-        env:
-          DEV_TEAM_ID: ${{ secrets.DEV_TEAM_ID }}
-
-      # Create build.json dynamically
-      - name: Create build.json
-        run: |
-          echo '{
-            "ios": {
-              "release": {
-                "codeSignIdentity": "iPhone Distribution",
-                "developmentTeam": "${{ secrets.DEV_TEAM_ID }}",
-                "packageType": "app-store",
-                "provisioningProfile": "${{ secrets.PROVISIONING_PROFILE }}"
-              }
-            }
-          }' > build.json
-
       # Install CocoaPods dependencies for iOS
       - name: Install CocoaPods
         run: pod install
         working-directory: platforms/ios
 
-      # Build the Cordova iOS app with the build.json config for signing
-      - name: Build iOS app
-        run: cordova build ios --release --device --buildConfig=build.json
+      # Build the Cordova iOS app without code signing
+      - name: Build iOS app (no code sign)
+        run: cordova build ios --release --device --no-sign
         working-directory: ./  # Asegúrate de estar en la raíz del proyecto
 
       # Prepare Payload directory
@@ -89,7 +64,7 @@ jobs:
 
       # Move the app into the Payload directory
       - name: Move app to Payload
-        run: mv HelloCordova.app/ Payload  # Cambia "HelloCordova" por el nombre de tu app
+        run: mv HelloCordova.app/ Payload  # Cambia "MyApp" por el nombre de tu app
         working-directory: platforms/ios/build/device
 
       # Zip the output
