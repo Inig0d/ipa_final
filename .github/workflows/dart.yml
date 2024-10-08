@@ -27,7 +27,12 @@ jobs:
         run: npm install
         working-directory: ./  # Asegúrate de estar en la raíz del proyecto
 
-      # Add iOS platform (if not already added)
+      # Remove iOS platform if it already exists (to avoid the "Platform already added" error)
+      - name: Remove iOS platform (if exists)
+        run: cordova platform rm ios || true
+        working-directory: ./  # Asegúrate de estar en la raíz del proyecto
+
+      # Add iOS platform
       - name: Add iOS platform
         run: cordova platform add ios
         working-directory: ./  # Asegúrate de estar en la raíz del proyecto
