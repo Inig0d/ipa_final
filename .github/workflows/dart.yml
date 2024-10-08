@@ -43,6 +43,10 @@ jobs:
           sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = 11.0/IPHONEOS_DEPLOYMENT_TARGET = 12.0/g' platforms/ios/HelloCordova.xcodeproj/project.pbxproj
           sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = 11.0/IPHONEOS_DEPLOYMENT_TARGET = 12.0/g' platforms/ios/CordovaLib/CordovaLib.xcodeproj/project.pbxproj
 
+      # Clear Xcode cache (optional but can help)
+      - name: Clear Xcode DerivedData
+        run: rm -rf ~/Library/Developer/Xcode/DerivedData/*
+
       # ** Create build.json to omit code signing **
       - name: Create build.json
         run: |
