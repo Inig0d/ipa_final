@@ -37,6 +37,12 @@ jobs:
         run: cordova platform add ios
         working-directory: ./  # Asegúrate de estar en la raíz del proyecto
 
+      # Update iOS deployment target in Cordova project files
+      - name: Update iOS deployment target
+        run: |
+          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = 11.0/IPHONEOS_DEPLOYMENT_TARGET = 12.0/g' platforms/ios/HelloCordova.xcodeproj/project.pbxproj
+          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = 11.0/IPHONEOS_DEPLOYMENT_TARGET = 12.0/g' platforms/ios/CordovaLib/CordovaLib.xcodeproj/project.pbxproj
+
       # ** Create build.json to omit code signing **
       - name: Create build.json
         run: |
@@ -68,7 +74,7 @@ jobs:
 
       # Build the Cordova iOS app (using build.json)
       - name: Build iOS app (using build.json)
-        run: cordova build ios --release --device --buildConfig=build.json
+        run: cordova build ios --release --device --buildConfig=build.json --no-sign
         working-directory: ./  # Asegúrate de estar en la raíz del proyecto
 
       # Prepare Payload directory
