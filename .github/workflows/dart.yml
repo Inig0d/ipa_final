@@ -37,6 +37,20 @@ jobs:
         run: cordova platform add ios
         working-directory: ./  # Asegúrate de estar en la raíz del proyecto
 
+      # ** Create build.json to omit code signing **
+      - name: Create build.json
+        run: |
+          echo '{
+            "ios": {
+              "release": {
+                "codeSignIdentity": "",
+                "provisioningProfile": "",
+                "developmentTeam": ""
+              }
+            }
+          }' > build.json
+        working-directory: ./  # Asegúrate de estar en la raíz del proyecto
+
       # ** Check if Podfile exists, and create it if it doesn't **
       - name: Force Podfile creation if missing
         run: |
@@ -52,9 +66,9 @@ jobs:
         run: pod install
         working-directory: platforms/ios
 
-      # Build the Cordova iOS app without code signing
-      - name: Build iOS app (no code sign)
-        run: cordova build ios --release --device --no-sign
+      # Build the Cordova iOS app (using build.json)
+      - name: Build iOS app (using build.json)
+        run: cordova build ios --release --device --buildConfig=build.json
         working-directory: ./  # Asegúrate de estar en la raíz del proyecto
 
       # Prepare Payload directory
@@ -64,7 +78,7 @@ jobs:
 
       # Move the app into the Payload directory
       - name: Move app to Payload
-        run: mv HelloCordova.app/ Payload  # Cambia "MyApp" por el nombre de tu app
+        run: mv HelloCordova.app/ Payload  # Cambia "HelloCordova" por el nombre de tu app
         working-directory: platforms/ios/build/device
 
       # Zip the output
