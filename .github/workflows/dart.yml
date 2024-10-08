@@ -38,6 +38,13 @@ jobs:
             exit 1
           fi
 
+      # Generate Podfile if missing
+      - name: Generate Podfile (if missing)
+        run: |
+          if [ ! -f "platforms/ios/Podfile" ]; then
+            pod init --project-directory=platforms/ios
+          fi
+
       # Install CocoaPods dependencies for iOS
       - name: Install CocoaPods
         run: pod install --project-directory=platforms/ios
