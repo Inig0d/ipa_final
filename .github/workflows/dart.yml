@@ -27,7 +27,7 @@ jobs:
       # Asegura que el nombre del proyecto sea válido en el pubspec.yaml
       - name: Ensure valid Dart package name
         run: |
-          if grep -q "name: IPA_final" pubspec.yaml; then
+          if grep -q "name: ipa" pubspec.yaml; then
             echo "Corrigiendo el nombre del paquete en pubspec.yaml"
             sed -i '' 's/name: IPA_final/name: ipa_final/' pubspec.yaml
           fi
