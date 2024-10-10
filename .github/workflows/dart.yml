@@ -24,22 +24,30 @@ jobs:
             flutter create .
           fi
 
+      # Asegura que el nombre del proyecto sea válido en el pubspec.yaml
+      - name: Ensure valid Dart package name
+        run: |
+          if grep -q "name: IPA_final" pubspec.yaml; then
+            echo "Corrigiendo el nombre del paquete en pubspec.yaml"
+            sed -i '' 's/name: IPA_final/name: ipa_final/' pubspec.yaml
+          fi
+
       # Añadir los assets al pubspec.yaml si no están presentes
       - name: Ensure assets configuration in pubspec.yaml
         run: |
-          if ! grep -q "assets/html/Mi carnet VIP – ▷Canjear Carnet VIP de Kandhavia.html" pubspec.yaml; then
+          if ! grep -q "assets/html/pagina.html" pubspec.yaml; then
             echo "Añadiendo configuración de assets al pubspec.yaml"
             echo "flutter:" >> pubspec.yaml
             echo "  assets:" >> pubspec.yaml
-            echo "    - assets/html/Mi carnet VIP – ▷Canjear Carnet VIP de Kandhavia.html" >> pubspec.yaml
+            echo "    - assets/html/pagina.html" >> pubspec.yaml
           fi
 
       # Verifica si el archivo HTML está en el lugar correcto
       - name: Ensure HTML file exists
         run: |
           mkdir -p assets/html
-          if [ ! -f assets/html/Mi carnet VIP – ▷Canjear Carnet VIP de Kandhavia.html ]; then
-            echo "Error: El archivo assets/html/Mi carnet VIP – ▷Canjear Carnet VIP de Kandhavia.html no existe."
+          if [ ! -f assets/html/pagina.html ]; then
+            echo "Error: El archivo assets/html/pagina.html no existe."
             exit 1
           fi
 
