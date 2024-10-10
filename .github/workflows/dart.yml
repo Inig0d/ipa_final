@@ -29,7 +29,7 @@ jobs:
         run: |
           if grep -q "name: ipa" pubspec.yaml; then
             echo "Corrigiendo el nombre del paquete en pubspec.yaml"
-            sed -i '' 's/name: IPA_final/name: ipa_final/' pubspec.yaml
+            sed -i '' 's/name: ipa/name: ipa/' pubspec.yaml
           fi
 
       # Añadir los assets al pubspec.yaml si no están presentes
