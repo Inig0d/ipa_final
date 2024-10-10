@@ -33,19 +33,19 @@ jobs:
       # Añadir los assets al pubspec.yaml si no están presentes
       - name: Ensure assets configuration in pubspec.yaml
         run: |
-          if ! grep -q "assets/html/pagina.html" pubspec.yaml; then
+          if ! grep -q "assets/html/Mi carnet VIP – ▷Canjear Carnet VIP de Kandhavia.html" pubspec.yaml; then
             echo "Añadiendo configuración de assets al pubspec.yaml"
             echo "flutter:" >> pubspec.yaml
             echo "  assets:" >> pubspec.yaml
-            echo "    - assets/html/pagina.html" >> pubspec.yaml
+            echo "    - assets/html/Mi carnet VIP – ▷Canjear Carnet VIP de Kandhavia.html" >> pubspec.yaml
           fi
 
       # Verifica si el archivo HTML está en el lugar correcto
       - name: Ensure HTML file exists
         run: |
           mkdir -p assets/html
-          if [ ! -f assets/html/pagina.html ]; then
-            echo "Error: El archivo assets/html/pagina.html no existe."
+          if [ ! -f assets/html/Mi carnet VIP – ▷Canjear Carnet VIP de Kandhavia.html ]; then
+            echo "Error: El archivo assets/html/Mi carnet VIP – ▷Canjear Carnet VIP de Kandhavia.html no existe."
             exit 1
           fi
 
