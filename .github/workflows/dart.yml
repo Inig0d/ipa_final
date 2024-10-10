@@ -4,7 +4,84 @@ on:
   workflow_dispatch:
 
 jobs:
+  build-ios:name: iOS-ipa-build
+
+on:
+  workflow_dispatch:
+
+jobs:
   build-ios:
+    name: 🎉 iOS Build
+    runs-on: macos-latest
+    steps:
+      # Clona el repositorio
+      - uses: actions/checkout@v3
+
+      # Instala Flutter usando el canal estable y la arquitectura x64
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          architecture: x64
+
+      # Verifica si ya existe el proyecto Flutter. Si no, lo crea automáticamente.
+      - name: Create Flutter project if not exists
+        run: |
+          if [ ! -f pubspec.yaml ]; then
+            flutter create .
+          fi
+
+      # Añadir los assets al pubspec.yaml si no están presentes
+      - name: Ensure assets configuration in pubspec.yaml
+        run: |
+          if ! grep -q "assets/html/pagina.html" pubspec.yaml; then
+            echo "Añadiendo configuración de assets al pubspec.yaml"
+            echo "flutter:" >> pubspec.yaml
+            echo "  assets:" >> pubspec.yaml
+            echo "    - assets/html/pagina.html" >> pubspec.yaml
+          fi
+
+      # Verifica si el archivo HTML está en el lugar correcto
+      - name: Ensure HTML file exists
+        run: |
+          mkdir -p assets/html
+          if [ ! -f assets/html/pagina.html ]; then
+            echo "Error: El archivo assets/html/pagina.html no existe."
+            exit 1
+          fi
+
+      # Instala las dependencias del proyecto Flutter
+      - run: flutter pub get
+
+      # Actualiza el repositorio de pods
+      - run: pod repo update
+        working-directory: ios
+
+      # Compila la versión release de la app iOS sin firmar
+      - run: flutter build ios --release --no-codesign
+
+      # Crea el directorio Payload
+      - run: mkdir Payload
+        working-directory: build/ios/iphoneos
+
+      # Mueve la app a la carpeta Payload
+      - run: mv Runner.app/ Payload
+        working-directory: build/ios/iphoneos
+
+      # Comprime los archivos en un archivo IPA
+      - name: Zip output
+        run: zip -qq -r -9 FlutterIpaExport.ipa Payload
+        working-directory: build/ios/iphoneos
+
+      # Sube el archivo IPA a la sección de releases
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/ios/iphoneos/FlutterIpaExport.ipa
+          tag: v1.0
+          overwrite: true
+          body: "This is first release"
+
     name: 🎉 iOS Cordova Build
     runs-on: macos-latest
     steps:
