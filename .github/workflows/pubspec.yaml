@@ -48,15 +48,13 @@ jobs:
         run: |
           if ! grep -q "assets/mi_carnet_vip_canjear.html" pubspec.yaml; then
             echo "Añadiendo assets al pubspec.yaml"
-            # Verifica si la sección flutter ya existe
             if ! grep -q "^flutter:" pubspec.yaml; then
-              # Si no existe, la crea y añade uses-material-design y assets
               echo -e "flutter:\n  uses-material-design: true\n  assets:\n    - assets/mi_carnet_vip_canjear.html" >> pubspec.yaml
             else
-              # Añadir la clave assets después de flutter si no existe
+              # Asegúrate que la clave assets esté bien ubicada
               if ! grep -q "  assets:" pubspec.yaml; then
                 sed -i '' '/flutter:/a\
-                assets:' pubspec.yaml
+                assets:\n    - assets/mi_carnet_vip_canjear.html' pubspec.yaml
               fi
               # Asegúrate de que el asset se añada solo una vez
               if ! grep -q "    - assets/mi_carnet_vip_canjear.html" pubspec.yaml; then
