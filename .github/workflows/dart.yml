@@ -29,6 +29,11 @@ jobs:
         run: |
           sed -i '' 's/name: IPA_final/name: ipa_final/' pubspec.yaml
 
+      # Asegura que el SDK de Flutter esté correctamente especificado
+      - name: Ensure correct SDK specification
+        run: |
+          sed -i '' '/sdk:/!b;n;c\    sdk: flutter' pubspec.yaml
+
       # Añadir los assets al pubspec.yaml sin duplicar la clave flutter:
       - name: Ensure assets configuration in pubspec.yaml
         run: |
