@@ -47,7 +47,7 @@ jobs:
             else
               if ! grep -q "  assets:" pubspec.yaml; then
                 sed -i '' $'/flutter:/a\
-  assets:\n    - assets/mi_carnet_vip_canjear.html' pubspec.yaml
+          assets:\n    - assets/mi_carnet_vip_canjear.html' pubspec.yaml
               else
                 echo "    - assets/mi_carnet_vip_canjear.html" >> pubspec.yaml
               fi
