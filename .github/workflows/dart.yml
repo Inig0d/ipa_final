@@ -27,7 +27,7 @@ jobs:
       # Asegura que el nombre del proyecto sea válido en el pubspec.yaml
       - name: Ensure valid Dart package name
         run: |
-          sed -i '' 's/name: prueba/name: prueba/' pubspec.yaml
+          sed -i '' 's/name: ipa/name: ipa/' pubspec.yaml
 
       # Añadir los assets al pubspec.yaml si no están presentes
       - name: Ensure assets configuration in pubspec.yaml
