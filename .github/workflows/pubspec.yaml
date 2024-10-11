@@ -41,6 +41,14 @@ jobs:
           echo "  assets:" >> pubspec.yaml
           echo "    - assets/mi_carnet_vip_canjear.html" >> pubspec.yaml
 
+      # Verifica si el proyecto Flutter se creó correctamente
+      - name: Verify Flutter project creation
+        run: |
+          if [ ! -d ios ]; then
+            echo "Error: El directorio ios no se creó. Asegúrate de que flutter create . se ejecute correctamente."
+            exit 1
+          fi
+
       # Verifica si el archivo HTML está en el lugar correcto (en la raíz)
       - name: Ensure HTML file exists
         run: |
@@ -57,7 +65,8 @@ jobs:
       - run: flutter pub get
 
       # Actualiza el repositorio de pods
-      - run: pod repo update
+      - name: Update CocoaPods repository
+        run: pod repo update
         working-directory: ios
 
       # Compila la versión release de la app iOS sin firmar
