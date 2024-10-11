@@ -33,9 +33,15 @@ jobs:
       - name: Ensure correct SDK specification
         run: |
           if ! grep -q "sdk: flutter" pubspec.yaml; then
-            sed -i '' '/environment:/a\
-          sdk: flutter' pubspec.yaml
+            # Verifica que la sección 'environment' exista
+            if ! grep -q "environment:" pubspec.yaml; then
+              echo -e "environment:\n  sdk: '>=2.12.0 <3.0.0'" >> pubspec.yaml
+            else
+              sed -i '' '/environment:/a\
+            sdk: flutter' pubspec.yaml
+            fi
           fi
+
 
       # Añadir los assets al pubspec.yaml sin duplicar la clave flutter:
       - name: Ensure assets configuration in pubspec.yaml
@@ -43,14 +49,14 @@ jobs:
           if ! grep -q "assets/mi_carnet_vip_canjear.html" pubspec.yaml; then
             echo "Añadiendo assets al pubspec.yaml"
             if ! grep -q "^flutter:" pubspec.yaml; then
-              echo -e "\nflutter:\n  uses-material-design: true\n  assets:\n    - assets/mi_carnet_vip_canjear.html" >> pubspec.yaml
+              echo -e "flutter:\n  uses-material-design: true\n  assets:\n    - assets/mi_carnet_vip_canjear.html" >> pubspec.yaml
             else
+              # Añadir la clave assets después de flutter:
               if ! grep -q "  assets:" pubspec.yaml; then
-                sed -i '' $'/flutter:/a\
-          assets:\n    - assets/mi_carnet_vip_canjear.html' pubspec.yaml
-              else
-                echo "    - assets/mi_carnet_vip_canjear.html" >> pubspec.yaml
+                sed -i '' '/flutter:/a\
+                assets:' pubspec.yaml
               fi
+              echo "    - assets/mi_carnet_vip_canjear.html" >> pubspec.yaml
             fi
           fi
 
@@ -62,8 +68,8 @@ jobs:
             exit 1
           else
             echo "El archivo mi_carnet_vip_canjear.html existe en la raíz, moviéndolo a assets/html..."
-            mkdir -p assets
-            mv mi_carnet_vip_canjear.html assets/
+            mkdir -p assets/html
+            mv mi_carnet_vip_canjear.html assets/html/
           fi
 
       # Instala las dependencias del proyecto Flutter
