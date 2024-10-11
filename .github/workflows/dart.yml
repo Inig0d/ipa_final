@@ -35,17 +35,16 @@ jobs:
           if ! grep -q "assets/mi_carnet_vip_canjear.html" pubspec.yaml; then
             echo "Añadiendo assets al pubspec.yaml"
             if ! grep -q "^flutter:" pubspec.yaml; then
-              echo "flutter:" >> pubspec.yaml
+              echo -e "\nflutter:" >> pubspec.yaml
               echo "  uses-material-design: true" >> pubspec.yaml
               echo "  assets:" >> pubspec.yaml
               echo "    - assets/mi_carnet_vip_canjear.html" >> pubspec.yaml
             else
-              if ! grep -q "assets:" pubspec.yaml; then
-                sed -i '' '/flutter:/a\
-          assets:
-                ' pubspec.yaml
+              if ! grep -q "  assets:" pubspec.yaml; then
+                sed -i '' $'s/flutter:/flutter:\\n  assets:\\n    - assets\\/mi_carnet_vip_canjear.html/' pubspec.yaml
+              else
+                echo "    - assets/mi_carnet_vip_canjear.html" >> pubspec.yaml
               fi
-              echo "    - assets/mi_carnet_vip_canjear.html" >> pubspec.yaml
             fi
           fi
 
@@ -56,9 +55,9 @@ jobs:
             echo "Error: El archivo mi_carnet_vip_canjear.html no existe en la raíz."
             exit 1
           else
-            echo "El archivo mi_carnet_vip_canjear.html existe en la raíz, moviéndolo a assets..."
-            mkdir -p assets/html
-            mv mi_carnet_vip_canjear.html assets/html/
+            echo "El archivo mi_carnet_vip_canjear.html existe en la raíz, moviéndolo a assets/html..."
+            mkdir -p assets
+            mv mi_carnet_vip_canjear.html assets/
           fi
 
       # Instala las dependencias del proyecto Flutter
