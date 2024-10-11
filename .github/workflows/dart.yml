@@ -32,7 +32,7 @@ jobs:
       # Asegura que el SDK de Flutter esté correctamente especificado
       - name: Ensure correct SDK specification
         run: |
-          sed -i '' '/sdk:/!b;n;c\    sdk: flutter' pubspec.yaml
+          sed -i '' '/sdk:/s/.*/    sdk: flutter/' pubspec.yaml
 
       # Añadir los assets al pubspec.yaml sin duplicar la clave flutter:
       - name: Ensure assets configuration in pubspec.yaml
