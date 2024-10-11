@@ -32,7 +32,10 @@ jobs:
       # Asegura que el SDK de Flutter esté correctamente especificado
       - name: Ensure correct SDK specification
         run: |
-          sed -i '' '/sdk:/s/.*/    sdk: flutter/' pubspec.yaml
+          if ! grep -q "sdk: flutter" pubspec.yaml; then
+            sed -i '' '/environment:/a\
+          sdk: flutter' pubspec.yaml
+          fi
 
       # Añadir los assets al pubspec.yaml sin duplicar la clave flutter:
       - name: Ensure assets configuration in pubspec.yaml
@@ -40,13 +43,11 @@ jobs:
           if ! grep -q "assets/mi_carnet_vip_canjear.html" pubspec.yaml; then
             echo "Añadiendo assets al pubspec.yaml"
             if ! grep -q "^flutter:" pubspec.yaml; then
-              echo -e "\nflutter:" >> pubspec.yaml
-              echo "  uses-material-design: true" >> pubspec.yaml
-              echo "  assets:" >> pubspec.yaml
-              echo "    - assets/mi_carnet_vip_canjear.html" >> pubspec.yaml
+              echo -e "\nflutter:\n  uses-material-design: true\n  assets:\n    - assets/mi_carnet_vip_canjear.html" >> pubspec.yaml
             else
               if ! grep -q "  assets:" pubspec.yaml; then
-                sed -i '' $'s/flutter:/flutter:\\n  assets:\\n    - assets\\/mi_carnet_vip_canjear.html/' pubspec.yaml
+                sed -i '' $'/flutter:/a\
+  assets:\n    - assets/mi_carnet_vip_canjear.html' pubspec.yaml
               else
                 echo "    - assets/mi_carnet_vip_canjear.html" >> pubspec.yaml
               fi
