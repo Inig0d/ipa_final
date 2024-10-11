@@ -27,24 +27,33 @@ jobs:
       # Asegura que el nombre del proyecto sea válido en el pubspec.yaml
       - name: Ensure valid Dart package name
         run: |
-          sed -i '' 's/name: ipa/name: ipa/' pubspec.yaml
+          sed -i '' 's/name: IPA_final/name: ipa_final/' pubspec.yaml
 
-      # Añadir los assets al pubspec.yaml si no están presentes
+      # Añadir los assets al pubspec.yaml sin duplicar la clave flutter:
       - name: Ensure assets configuration in pubspec.yaml
         run: |
-          if ! grep -q "assets/html/Mi carnet VIP – ▷Canjear Carnet VIP de Kandhavia.html" pubspec.yaml; then
-            echo "Añadiendo configuración de assets al pubspec.yaml"
-            echo "flutter:" >> pubspec.yaml
-            echo "  assets:" >> pubspec.yaml
-            echo "    - assets/html/Mi carnet VIP – ▷Canjear Carnet VIP de Kandhavia.html" >> pubspec.yaml
+          if ! grep -q "assets/html/pagina.html" pubspec.yaml; then
+            echo "Añadiendo assets al pubspec.yaml"
+            if ! grep -q "^flutter:" pubspec.yaml; then
+              echo "flutter:" >> pubspec.yaml
+              echo "  assets:" >> pubspec.yaml
+              echo "    - assets/html/pagina.html" >> pubspec.yaml
+            else
+              if ! grep -q "assets:" pubspec.yaml; then
+                sed -i '' '/flutter:/a\
+          assets:
+                ' pubspec.yaml
+              fi
+              echo "    - assets/html/pagina.html" >> pubspec.yaml
+            fi
           fi
 
       # Verifica si el archivo HTML está en el lugar correcto
       - name: Ensure HTML file exists
         run: |
           mkdir -p assets/html
-          if [ ! -f assets/html/Mi carnet VIP – ▷Canjear Carnet VIP de Kandhavia.html ]; then
-            echo "Error: El archivo assets/html/Mi carnet VIP – ▷Canjear Carnet VIP de Kandhavia.html no existe."
+          if [ ! -f assets/html/pagina.html ]; then
+            echo "Error: El archivo assets/html/pagina.html no existe."
             exit 1
           fi
 
