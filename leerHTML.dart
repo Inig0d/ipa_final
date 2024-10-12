@@ -22,7 +22,7 @@ class _MyAppState extends State<MyApp> {
 
   // Cargar el archivo HTML desde assets
   Future<void> _loadHtmlFromAssets() async {
-    String fileContent = await rootBundle.loadString('assets/html/Mi carnet VIP – ▷Canjear Carnet VIP de Kandhavia.html');
+    String fileContent = await rootBundle.loadString('assets/html/mi_carnet_vip_canjear.html');
     setState(() {
       _htmlContent = fileContent;
     });
