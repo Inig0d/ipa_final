@@ -68,6 +68,23 @@ jobs:
             mv mi_carnet_vip_canjear.html assets/html/
           fi
 
+      # Asegura que el archivo HTML esté registrado como un recurso en pubspec.yaml
+      - name: Ensure HTML file is listed in pubspec.yaml
+        run: |
+          if ! grep -q "assets/html/mi_carnet_vip_canjear.html" pubspec.yaml; then
+            echo "Registrando archivo HTML en pubspec.yaml..."
+            sed -i '' '/assets:/a\
+            - assets/html/mi_carnet_vip_canjear.html' pubspec.yaml
+          fi
+
+      # Verifica si el archivo Dart está en el lugar correcto (en la carpeta lib)
+      - name: Ensure Dart file exists
+        run: |
+          if [ ! -f lib/mi_codigo.dart ]; then
+            echo "Error: El archivo mi_codigo.dart no existe en lib."
+            exit 1
+          fi
+
       # Instala las dependencias del proyecto Flutter
       - run: flutter pub get
 
