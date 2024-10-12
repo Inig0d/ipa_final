@@ -38,23 +38,11 @@ jobs:
             exit 1
           fi
 
-      # Asegura que el nombre del proyecto sea válido en el pubspec.yaml
-      - name: Ensure valid Dart package name
+      # Reemplaza el archivo main.dart generado por el archivo Dart personalizado
+      - name: Replace main.dart with custom Dart file
         run: |
-          sed -i '' 's/name: IPA_final/name: ipa_final/' pubspec.yaml
-
-      # Asegura que el SDK de Flutter esté correctamente especificado
-      - name: Ensure correct SDK specification
-        run: |
-          if ! grep -q "sdk: flutter" pubspec.yaml; then
-            # Verifica que la sección 'environment' exista
-            if ! grep -q "environment:" pubspec.yaml; then
-              echo -e "environment:\n  sdk: '>=2.12.0 <3.0.0'" >> pubspec.yaml
-            else
-              sed -i '' '/environment:/a\
-            sdk: flutter' pubspec.yaml
-            fi
-          fi
+          echo "Reemplazando main.dart con el archivo personalizado..."
+          mv leerHTML.dart lib/leerHTML.dart
 
       # Verifica si el archivo HTML está en el lugar correcto (en la raíz)
       - name: Ensure HTML file exists
