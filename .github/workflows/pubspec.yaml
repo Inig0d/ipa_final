@@ -42,7 +42,7 @@ jobs:
       - name: Replace main.dart with custom Dart file
         run: |
           echo "Reemplazando main.dart con el archivo personalizado..."
-          mv leerHTML.dart lib/leerHTML.dart
+          mv leerHTML.dart lib/main.dart
 
       # Verifica si el archivo HTML está en el lugar correcto (en la raíz)
       - name: Ensure HTML file exists
@@ -54,6 +54,16 @@ jobs:
             echo "El archivo mi_carnet_vip_canjear.html existe en la raíz, moviéndolo a assets/html..."
             mkdir -p assets/html
             mv mi_carnet_vip_canjear.html assets/html/
+          fi
+
+      # Asegúrate de que los assets están definidos en pubspec.yaml
+      - name: Ensure assets configuration
+        run: |
+          if ! grep -q "assets/html/mi_carnet_vip_canjear.html" pubspec.yaml; then
+            echo "Configurando los assets en pubspec.yaml..."
+            echo "flutter:" >> pubspec.yaml
+            echo "  assets:" >> pubspec.yaml
+            echo "    - assets/html/mi_carnet_vip_canjear.html" >> pubspec.yaml
           fi
 
       # Instala las dependencias del proyecto Flutter
