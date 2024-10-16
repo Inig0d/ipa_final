@@ -56,22 +56,34 @@ jobs:
             mv mi_carnet_vip_canjear.html assets/html/
           fi
 
-      # Asegúrate de que los assets están definidos en pubspec.yaml sin duplicar "flutter:"
-      - name: Add assets to pubspec.yaml
+      # Sobrescribe o crea un pubspec.yaml correcto sin modificarlo dinámicamente
+      - name: Ensure correct pubspec.yaml structure
         run: |
-          if ! grep -q "assets/html/mi_carnet_vip_canjear.html" pubspec.yaml; then
-            echo "Verificando si ya existe la sección de assets..."
-            if grep -q "flutter:" pubspec.yaml; then
-              # Si la sección flutter ya existe, agregar los assets
-              echo "Agregando assets a la sección existente de flutter..."
-              awk '/flutter:/{print;print "  assets:\n    - assets/html/mi_carnet_vip_canjear.html";next}1' pubspec.yaml > pubspec_temp.yaml
-              mv pubspec_temp.yaml pubspec.yaml
-            else
-              # Si no existe la sección flutter, agregar todo
-              echo "Agregando sección flutter con assets..."
-              echo -e "\nflutter:\n  assets:\n    - assets/html/mi_carnet_vip_canjear.html" >> pubspec.yaml
-            fi
-          fi
+          cat <<EOT > pubspec.yaml
+          name: ipa_final
+          description: A new Flutter project.
+
+          version: 1.0.0+1
+
+          environment:
+            sdk: ">=2.12.0 <3.0.0"
+
+          dependencies:
+            flutter:
+              sdk: flutter
+
+            flutter_html: ^2.2.1
+
+          dev_dependencies:
+            flutter_test:
+              sdk: flutter
+
+          flutter:
+            uses-material-design: true
+
+            assets:
+              - assets/html/mi_carnet_vip_canjear.html
+          EOT
 
       # Instala las dependencias del proyecto Flutter
       - run: flutter pub get
