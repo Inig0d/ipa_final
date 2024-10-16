@@ -24,11 +24,30 @@ jobs:
             flutter create .
           fi
 
-      # Reemplaza el archivo main.dart generado por el archivo Dart personalizado
-      - name: Replace main.dart with custom Dart file
+      # Paso de depuración: listar el contenido del directorio
+      - name: List directory content
         run: |
-          echo "Reemplazando main.dart con el archivo personalizado..."
-          mv lib/leerHTML.dart lib/main.dart
+          echo "Contenido del directorio actual:"
+          ls -la
+
+      # Verifica si el proyecto Flutter se creó correctamente
+      - name: Verify Flutter project creation
+        run: |
+          if [ ! -d ios ]; then
+            echo "Error: El directorio ios no se creó. Asegúrate de que flutter create . se ejecute correctamente."
+            exit 1
+          fi
+
+      # Verifica si leerHTML.dart existe antes de moverlo
+      - name: Check if leerHTML.dart exists
+        run: |
+          if [ -f leerHTML.dart ]; then
+            echo "El archivo leerHTML.dart existe, procediendo a reemplazar main.dart..."
+            mv leerHTML.dart lib/main.dart
+          else
+            echo "Error: El archivo leerHTML.dart no existe en la raíz."
+            exit 1
+          fi
 
       # Verifica si el archivo HTML está en el lugar correcto (en la raíz)
       - name: Ensure HTML file exists
@@ -42,8 +61,42 @@ jobs:
             mv mi_carnet_vip_canjear.html assets/html/
           fi
 
+      # Asegúrate de que los assets están definidos en pubspec.yaml sin duplicar "flutter:"
+      - name: Ensure correct pubspec.yaml structure
+        run: |
+          cat <<EOT > pubspec.yaml
+          name: ipa_final
+          description: A new Flutter project.
+
+          version: 1.0.0+1
+
+          environment:
+            sdk: ">=2.12.0 <3.0.0"
+
+          dependencies:
+            flutter:
+              sdk: flutter
+
+            flutter_html: ^2.2.1
+
+          dev_dependencies:
+            flutter_test:
+              sdk: flutter
+
+          flutter:
+            uses-material-design: true
+
+            assets:
+              - assets/html/mi_carnet_vip_canjear.html
+          EOT
+
       # Instala las dependencias del proyecto Flutter
       - run: flutter pub get
+
+      # Actualiza el repositorio de pods
+      - name: Update CocoaPods repository
+        run: pod repo update
+        working-directory: ios
 
       # Compila la versión release de la app iOS sin firmar
       - run: flutter build ios --release --no-codesign
