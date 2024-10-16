@@ -56,7 +56,7 @@ jobs:
             mv mi_carnet_vip_canjear.html assets/html/
           fi
 
-      # Sobrescribe o crea un pubspec.yaml correcto sin modificarlo dinámicamente
+      # Sobrescribe o crea un pubspec.yaml correcto sin dependencias innecesarias
       - name: Ensure correct pubspec.yaml structure
         run: |
           cat <<EOT > pubspec.yaml
