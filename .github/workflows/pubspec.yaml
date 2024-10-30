@@ -34,6 +34,14 @@ jobs:
           fi
           echo "Todos los archivos esenciales están en su lugar."
 
+      # Crea el proyecto si no tiene la carpeta ios
+      - name: Create Flutter project if not exists
+        run: |
+          if [ ! -d ios ]; then
+            echo "La carpeta ios no se encontró. Creando la estructura de proyecto Flutter..."
+            flutter create .
+          fi
+
       # Mueve `leerHTML.dart` a `lib/main.dart` para que sea el archivo principal de la aplicación
       - name: Set leerHTML.dart as main file
         run: |
