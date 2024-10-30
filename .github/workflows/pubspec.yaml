@@ -53,7 +53,7 @@ jobs:
         run: |
           mkdir -p assets/html
           mv mi_carnet_vip_canjear.html assets/html/mi_carnet_vip_canjear.html
-          
+
           # Agrega el archivo HTML como un asset en pubspec.yaml si no está presente
           if ! grep -q "assets/html/mi_carnet_vip_canjear.html" pubspec.yaml; then
             echo "Configurando assets y entorno en pubspec.yaml..."
@@ -102,12 +102,11 @@ jobs:
 
       # Verifica dependencias y salida de Flutter
       - name: Check Flutter dependencies
-        run: |
-          flutter pub deps
+        run: flutter pub deps
 
       # Compila la app iOS en modo release sin firmar
       - name: Build iOS app
-        run: flutter build ios --release --no-codesign -v
+        run: flutter build ios --release --no-codesign
 
       # Crea el directorio Payload y mueve la app
       - name: Create Payload directory
