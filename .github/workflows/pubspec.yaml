@@ -34,7 +34,7 @@ jobs:
           fi
           echo "Todos los archivos esenciales están en su lugar."
 
-      # Mueve el archivo `leerHTML.dart` a `lib/main.dart` para que sea el archivo principal de la aplicación
+      # Mueve `leerHTML.dart` a `lib/main.dart` para que sea el archivo principal de la aplicación
       - name: Set leerHTML.dart as main file
         run: |
           mkdir -p lib
@@ -46,11 +46,13 @@ jobs:
           mkdir -p assets/html
           mv mi_carnet_vip_canjear.html assets/html/mi_carnet_vip_canjear.html
           
-          # Agrega el archivo HTML como un asset en pubspec.yaml
-          echo "  assets:" >> pubspec.yaml
-          echo "    - assets/html/mi_carnet_vip_canjear.html" >> pubspec.yaml
+          # Agrega el archivo HTML como un asset en pubspec.yaml si no está presente
+          if ! grep -q "assets/html/mi_carnet_vip_canjear.html" pubspec.yaml; then
+            echo "Configurando assets y entorno en pubspec.yaml..."
+            sed -i -e '/^flutter:/a\ \ assets:\n\ \ \ \ - assets/html/mi_carnet_vip_canjear.html' pubspec.yaml
+          fi
 
-    # Añadir constraint de SDK en pubspec.yaml si no existe
+      # Añadir constraint de SDK en pubspec.yaml si no existe
       - name: Add SDK constraint to pubspec.yaml
         run: |
           if ! grep -q "^environment:" pubspec.yaml; then
