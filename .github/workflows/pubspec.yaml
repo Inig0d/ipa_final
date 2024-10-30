@@ -70,6 +70,12 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      # Verifica y actualiza el SDK y las dependencias
+      - name: Verify and update SDK
+        run: |
+          dart --version
+          flutter pub upgrade --major-versions
+
       # Compila la app iOS en modo release sin firmar
       - name: Build iOS app
         run: flutter build ios --release --no-codesign
