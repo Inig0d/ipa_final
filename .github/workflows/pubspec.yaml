@@ -84,6 +84,14 @@ jobs:
             sed -i '' '/win32/d' pubspec.lock
           fi
 
+      # Elimina el archivo pubspec.lock si existe
+      - name: Remove pubspec.lock if exists
+        run: |
+          if [ -f pubspec.lock ]; then
+            echo "Eliminando pubspec.lock para regenerarlo..."
+            rm pubspec.lock
+          fi
+
       # Limpia el proyecto para evitar problemas de caché
       - name: Clean Flutter build
         run: flutter clean
