@@ -28,7 +28,7 @@ jobs:
             echo "Error: leerHTML.dart no encontrado en la raíz del proyecto."
             exit 1
           fi
-          if [ ! -f mi_carnet_vip_canjear.html ]; then
+          if [ ! -f assets/html/mi_carnet_vip_canjear.html ]; then
             echo "Error: mi_carnet_vip_canjear.html no encontrado en la raíz del proyecto."
             exit 1
           fi
@@ -66,6 +66,14 @@ jobs:
           if ! grep -q "^environment:" pubspec.yaml; then
             echo "Agregando constraint de SDK en pubspec.yaml..."
             echo -e "environment:\n  sdk: '>=3.5.0 <4.0.0'\n$(cat pubspec.yaml)" > pubspec.yaml
+          fi
+
+      # Elimina la dependencia de `win32` del pubspec.yaml si existe
+      - name: Remove win32 dependency if exists
+        run: |
+          if grep -q "win32" pubspec.yaml; then
+            echo "Eliminando la dependencia win32 del pubspec.yaml..."
+            sed -i '' '/win32/d' pubspec.yaml
           fi
 
       # Limpia la caché de pub y obtiene las dependencias del proyecto
