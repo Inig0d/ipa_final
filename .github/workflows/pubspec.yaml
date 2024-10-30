@@ -20,7 +20,7 @@ jobs:
       # Verifica si los archivos esenciales existen en la raíz del proyecto
       - name: Verify essential files
         run: |
-          if [ ! -f pubspec.yaml ]; then
+          if [ ! -f .github/workflows/pubspec.yaml ]; then
             echo "Error: pubspec.yaml no encontrado en la raíz del proyecto."
             exit 1
           fi
