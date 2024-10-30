@@ -68,13 +68,9 @@ jobs:
             echo -e "environment:\n  sdk: '>=3.0.0 <4.0.0'\n$(cat pubspec.yaml)" > pubspec.yaml
           fi
 
-      # Elimina la dependencia de `win32` del pubspec.yaml si existe
-      - name: Remove win32 dependency if exists
-        run: |
-          if grep -q "win32" pubspec.yaml; then
-            echo "Eliminando la dependencia win32 del pubspec.yaml..."
-            sed -i '' '/win32/d' pubspec.yaml
-          fi
+      # Limpia el proyecto para evitar problemas de caché
+      - name: Clean Flutter build
+        run: flutter clean
 
       # Limpia la caché de pub
       - name: Clean pub cache
