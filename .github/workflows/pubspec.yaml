@@ -11,75 +11,58 @@ jobs:
       # Clona el repositorio
       - uses: actions/checkout@v3
 
-      # Paso de depuración: listar el contenido del directorio para verificar la estructura inicial
-      - name: List directory content after checkout
-        run: |
-          echo "Contenido del directorio después del checkout:"
-          ls -la
-
-      # Instala Flutter usando el canal estable y la arquitectura x64
+      # Instala Flutter en el canal estable
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           architecture: x64
 
-      # Verifica si ya existe el proyecto Flutter. Si no, lo crea automáticamente.
-      - name: Create Flutter project if not exists
+      # Verifica si los archivos esenciales existen en la raíz del proyecto
+      - name: Verify essential files
         run: |
           if [ ! -f pubspec.yaml ]; then
-            flutter create .
-          fi
-
-      # Listar contenido del directorio después de crear el proyecto
-      - name: List directory content after project creation
-        run: |
-          echo "Contenido del directorio después de la creación del proyecto:"
-          ls -la
-
-      # Asegúrate de que el archivo leerHTML.dart exista en la ruta correcta (directamente en la raíz o en lib/)
-      - name: Ensure leerHTML.dart exists and move to lib/
-        run: |
-          if [ -f leerHTML.dart ]; then
-            echo "Mover leerHTML.dart a lib/"
-            mv leerHTML.dart lib/
-          elif [ ! -f lib/leerHTML.dart ]; then
-            echo "Error: leerHTML.dart no existe en la raíz ni en lib/."
+            echo "Error: pubspec.yaml no encontrado en la raíz del proyecto."
             exit 1
           fi
-
-      # Asegúrate de que el archivo HTML esté en la raíz y muévelo a la carpeta de assets
-      - name: Ensure HTML file exists
-        run: |
+          if [ ! -f leerHTML.dart ]; then
+            echo "Error: leerHTML.dart no encontrado en la raíz del proyecto."
+            exit 1
+          fi
           if [ ! -f mi_carnet_vip_canjear.html ]; then
-            echo "Error: El archivo mi_carnet_vip_canjear.html no existe en la raíz."
+            echo "Error: mi_carnet_vip_canjear.html no encontrado en la raíz del proyecto."
             exit 1
-          else
-            echo "Moviendo el archivo mi_carnet_vip_canjear.html a assets/html..."
-            mkdir -p assets/html
-            mv mi_carnet_vip_canjear.html assets/html/
           fi
+          echo "Todos los archivos esenciales están en su lugar."
 
-      # Listar el contenido del directorio para asegurarnos de que los archivos están en su lugar
-      - name: List directory content before build
+      # Mueve el archivo `leerHTML.dart` a `lib/main.dart` para que sea el archivo principal de la aplicación
+      - name: Set leerHTML.dart as main file
         run: |
-          echo "Contenido del directorio antes de la compilación:"
-          ls -la
+          mkdir -p lib
+          mv leerHTML.dart lib/main.dart
 
-      # Limpia y reinstala las dependencias del proyecto Flutter
+      # Mueve el archivo HTML a la carpeta de assets y configura las dependencias
+      - name: Move HTML file and update pubspec.yaml
+        run: |
+          mkdir -p assets/html
+          mv mi_carnet_vip_canjear.html assets/html/mi_carnet_vip_canjear.html
+          
+          # Agrega el archivo HTML como un asset en pubspec.yaml
+          echo "  assets:" >> pubspec.yaml
+          echo "    - assets/html/mi_carnet_vip_canjear.html" >> pubspec.yaml
+
+      # Limpia y obtiene las dependencias del proyecto
       - name: Clean and get dependencies
         run: |
           flutter clean
           flutter pub get
 
-      # Compila la versión release de la app iOS sin firmar
+      # Compila la app iOS en modo release sin firmar
       - run: flutter build ios --release --no-codesign
 
-      # Crea el directorio Payload
+      # Crea el directorio Payload y mueve la app
       - run: mkdir Payload
         working-directory: build/ios/iphoneos
-
-      # Mueve la app a la carpeta Payload
-      - run: mv Runner.app/ Payload
+      - run: mv Runner.app Payload
         working-directory: build/ios/iphoneos
 
       # Comprime los archivos en un archivo IPA
@@ -95,4 +78,4 @@ jobs:
           file: build/ios/iphoneos/FlutterIpaExport.ipa
           tag: v1.0
           overwrite: true
-          body: "This is first release"
+          body: "This is the first release of the HTML renderer app."
