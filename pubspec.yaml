@@ -1,0 +1,18 @@
+name: mi_carnet_vip_app  # Cambia esto por el nombre deseado de tu aplicación
+description: Aplicación para renderizar HTML desde un archivo.
+publish_to: 'none' # Para no publicar en pub.dev, puedes dejarlo así
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_html: ^2.0.0 # Asegúrate de incluir las dependencias necesarias
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/html/mi_carnet_vip_canjear.html  # Asegúrate de que esta línea esté presente
