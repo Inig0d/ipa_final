@@ -1,15 +1,20 @@
 name: ipa_final
-description: A new Flutter project.
+description: A Flutter project to render HTML files.
 
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"  # Asegúrate de que sea compatible
+  sdk: ">=3.0.0 <4.0.0"  # Asegúrate de que sea compatible con Dart 3.5.4
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_html: ^2.2.1
+  # Añade otras dependencias necesarias según tu proyecto
+  cupertino_icons: ^1.0.8      # Agrega esta si usas íconos de Cupertino
+  webview_flutter: ^2.8.0       # Agrega esta si usas WebView
+  video_player: ^2.9.2          # Agrega esta si necesitas reproducir videos
+  flutter_svg: ^0.23.0+1        # Agrega esta si necesitas SVGs
 
 dev_dependencies:
   flutter_test:
@@ -19,4 +24,4 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/html/mi_carnet_vip_canjear.html
+    - assets/html/mi_carnet_vip_canjear.html  # Asegúrate de que el archivo HTML existe en esta ruta
