@@ -66,6 +66,14 @@ jobs:
           flutter clean
           flutter pub get
 
+      # Verifica si el proyecto tiene soporte para iOS
+      - name: Verify iOS configuration
+        run: |
+          if [ ! -d ios ]; then
+            echo "Error: La carpeta ios no se encontró, el proyecto no está configurado para iOS."
+            exit 1
+          fi
+
       # Compila la app iOS en modo release sin firmar
       - run: flutter build ios --release --no-codesign
 
