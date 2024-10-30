@@ -50,6 +50,14 @@ jobs:
           echo "  assets:" >> pubspec.yaml
           echo "    - assets/html/mi_carnet_vip_canjear.html" >> pubspec.yaml
 
+    # Añadir constraint de SDK en pubspec.yaml si no existe
+      - name: Add SDK constraint to pubspec.yaml
+        run: |
+          if ! grep -q "^environment:" pubspec.yaml; then
+            echo "Agregando constraint de SDK en pubspec.yaml..."
+            echo -e "environment:\n  sdk: '>=3.5.0 <4.0.0'\n$(cat pubspec.yaml)" > pubspec.yaml
+          fi
+
       # Limpia y obtiene las dependencias del proyecto
       - name: Clean and get dependencies
         run: |
