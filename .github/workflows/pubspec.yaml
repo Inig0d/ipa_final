@@ -30,17 +30,24 @@ jobs:
           echo "Contenido del directorio actual:"
           ls -la
 
-      # Paso de depuración: listar el contenido del directorio lib
-      - name: List lib directory content
+      # Verifica si el proyecto Flutter se creó correctamente
+      - name: Verify Flutter project creation
         run: |
-          echo "Contenido del directorio lib:"
-          ls -la lib
+          if [ ! -d ios ]; then
+            echo "Error: El directorio ios no se creó. Asegúrate de que flutter create . se ejecute correctamente."
+            exit 1
+          fi
 
-      # Reemplaza el archivo main.dart generado por el archivo Dart personalizado
-      - name: Replace main.dart with custom Dart file
+      # Verifica si leerHTML.dart existe antes de moverlo
+      - name: Check if leerHTML.dart exists
         run: |
-          echo "Reemplazando main.dart con el archivo personalizado..."
-          mv lib/leerHTML.dart lib/main.dart || echo "Error: leerHTML.dart no encontrado."
+          if [ -f leerHTML.dart ]; then
+            echo "El archivo leerHTML.dart existe, procediendo a reemplazar main.dart..."
+            mv leerHTML.dart lib/main.dart
+          else
+            echo "Error: El archivo leerHTML.dart no existe en la raíz."
+            exit 1
+          fi
 
       # Verifica si el archivo HTML está en el lugar correcto (en la raíz)
       - name: Ensure HTML file exists
@@ -55,8 +62,12 @@ jobs:
           fi
 
       # Instala las dependencias del proyecto Flutter
-      - name: Get dependencies
-        run: flutter pub get
+      - run: flutter pub get
+
+      # Actualiza el repositorio de pods
+      - name: Update CocoaPods repository
+        run: pod repo update
+        working-directory: ios
 
       # Compila la versión release de la app iOS sin firmar
       - run: flutter build ios --release --no-codesign
