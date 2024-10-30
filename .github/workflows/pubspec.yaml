@@ -28,7 +28,7 @@ jobs:
             echo "Error: leerHTML.dart no encontrado en la raíz del proyecto."
             exit 1
           fi
-          if [ ! -f assets/html/mi_carnet_vip_canjear.html ]; then
+          if [ ! -f mi_carnet_vip_canjear.html ]; then
             echo "Error: mi_carnet_vip_canjear.html no encontrado en la raíz del proyecto."
             exit 1
           fi
