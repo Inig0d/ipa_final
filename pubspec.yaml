@@ -4,12 +4,12 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.0.0 <4.0.0"  # Asegúrate de que sea compatible
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_html: ^2.2.1  # Asegúrate de que esto no dependa de `win32`
+  flutter_html: ^2.2.1
 
 dev_dependencies:
   flutter_test:
