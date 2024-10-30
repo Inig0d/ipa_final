@@ -42,7 +42,7 @@ jobs:
             flutter create .
           fi
 
-      # Mueve `leerHTML.dart` a `lib/main.dart` para que sea el archivo principal de la aplicación
+      # Mueve `leerHTML.dart` a `lib/main.dart`
       - name: Set leerHTML.dart as main file
         run: |
           mkdir -p lib
@@ -53,7 +53,7 @@ jobs:
         run: |
           mkdir -p assets/html
           mv mi_carnet_vip_canjear.html assets/html/mi_carnet_vip_canjear.html
-
+          
           # Agrega el archivo HTML como un asset en pubspec.yaml si no está presente
           if ! grep -q "assets/html/mi_carnet_vip_canjear.html" pubspec.yaml; then
             echo "Configurando assets y entorno en pubspec.yaml..."
@@ -91,6 +91,14 @@ jobs:
       # Obtiene las dependencias del proyecto
       - name: Get dependencies
         run: flutter pub get
+
+      # Mostrar contenido de pubspec.yaml y pubspec.lock para depuración
+      - name: Show pubspec files
+        run: |
+          cat pubspec.yaml
+          if [ -f pubspec.lock ]; then
+            cat pubspec.lock
+          fi
 
       # Verifica si el proyecto tiene soporte para iOS
       - name: Verify iOS configuration
