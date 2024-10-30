@@ -1,4 +1,4 @@
-name: ipa_final
+name: KandaviaVIP
 description: A Flutter project to render HTML files.
 
 version: 1.0.0+1
@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_html: ^2.2.1
+  win32: ^3.1.4  # Especifica la versión para garantizar compatibilidad
 
 dev_dependencies:
   flutter_test:
