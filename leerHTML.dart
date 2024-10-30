@@ -22,6 +22,7 @@ class _MyAppState extends State<MyApp> {
 
   // Cargar el archivo HTML desde assets
   Future<void> _loadHtmlFromAssets() async {
+    // Cambia aquí si decides renombrar el archivo
     String fileContent = await rootBundle.loadString('assets/html/mi_carnet_vip_canjear.html');
     setState(() {
       _htmlContent = fileContent;
@@ -37,9 +38,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: SingleChildScrollView(
           child: _htmlContent.isNotEmpty
-              ? Html(
-                  data: _htmlContent,
-                )
+              ? Html(data: _htmlContent)
               : Center(child: CircularProgressIndicator()),
         ),
       ),
