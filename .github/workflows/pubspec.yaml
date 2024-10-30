@@ -71,11 +71,10 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # Modifica el archivo de flutter_layout_grid para evitar el error de tipo
-      - name: Fix flutter_layout_grid type error
+      # Modifica el archivo de flutter_layout_grid para hacer un casting explícito
+      - name: Fix flutter_layout_grid type error with explicit cast
         run: |
-          sed -i '' '82s/final //' $HOME/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
-          sed -i '' 's/someRenderObject;/someRenderObject as AbstractNode;/' $HOME/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
+          sed -i '' '82s/\(someRenderObject\)/\(\1 as AbstractNode\)/' $HOME/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
 
       # Compila la app iOS en modo release sin firmar
       - name: Build iOS app
