@@ -11,6 +11,12 @@ jobs:
       # Clona el repositorio
       - uses: actions/checkout@v3
 
+      # Paso de depuración: listar el contenido del directorio para verificar la estructura inicial
+      - name: List directory content after checkout
+        run: |
+          echo "Contenido del directorio después del checkout:"
+          ls -la
+
       # Instala Flutter usando el canal estable y la arquitectura x64
       - uses: subosito/flutter-action@v2
         with:
@@ -24,50 +30,46 @@ jobs:
             flutter create .
           fi
 
-      # Paso de depuración: listar el contenido del directorio
-      - name: List directory content
+      # Listar contenido del directorio después de crear el proyecto
+      - name: List directory content after project creation
         run: |
-          echo "Contenido del directorio actual:"
+          echo "Contenido del directorio después de la creación del proyecto:"
           ls -la
 
-      # Verifica si el proyecto Flutter se creó correctamente
-      - name: Verify Flutter project creation
-        run: |
-          if [ ! -d ios ]; then
-            echo "Error: El directorio ios no se creó. Asegúrate de que flutter create . se ejecute correctamente."
-            exit 1
-          fi
-
-      # Verifica si leerHTML.dart existe antes de moverlo
-      - name: Check if leerHTML.dart exists
+      # Asegúrate de que el archivo leerHTML.dart exista en la ruta correcta (directamente en la raíz o en lib/)
+      - name: Ensure leerHTML.dart exists and move to lib/
         run: |
           if [ -f leerHTML.dart ]; then
-            echo "El archivo leerHTML.dart existe, procediendo a reemplazar main.dart..."
-            mv leerHTML.dart lib/main.dart
-          else
-            echo "Error: El archivo leerHTML.dart no existe en la raíz."
+            echo "Mover leerHTML.dart a lib/"
+            mv leerHTML.dart lib/
+          elif [ ! -f lib/leerHTML.dart ]; then
+            echo "Error: leerHTML.dart no existe en la raíz ni en lib/."
             exit 1
           fi
 
-      # Verifica si el archivo HTML está en el lugar correcto (en la raíz)
+      # Asegúrate de que el archivo HTML esté en la raíz y muévelo a la carpeta de assets
       - name: Ensure HTML file exists
         run: |
           if [ ! -f mi_carnet_vip_canjear.html ]; then
             echo "Error: El archivo mi_carnet_vip_canjear.html no existe en la raíz."
             exit 1
           else
-            echo "El archivo mi_carnet_vip_canjear.html existe en la raíz, moviéndolo a assets/html..."
+            echo "Moviendo el archivo mi_carnet_vip_canjear.html a assets/html..."
             mkdir -p assets/html
             mv mi_carnet_vip_canjear.html assets/html/
           fi
 
-      # Instala las dependencias del proyecto Flutter
-      - run: flutter pub get
+      # Listar el contenido del directorio para asegurarnos de que los archivos están en su lugar
+      - name: List directory content before build
+        run: |
+          echo "Contenido del directorio antes de la compilación:"
+          ls -la
 
-      # Actualiza el repositorio de pods
-      - name: Update CocoaPods repository
-        run: pod repo update
-        working-directory: ios
+      # Limpia y reinstala las dependencias del proyecto Flutter
+      - name: Clean and get dependencies
+        run: |
+          flutter clean
+          flutter pub get
 
       # Compila la versión release de la app iOS sin firmar
       - run: flutter build ios --release --no-codesign
