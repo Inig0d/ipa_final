@@ -88,9 +88,7 @@ jobs:
       - name: Clean Flutter build
         run: flutter clean
 
-      # Obtiene las dependencias del proyecto
-      - name: Get dependencies
-        run: flutter pub get
+
 
       # Verifica si el proyecto tiene soporte para iOS
       - name: Verify iOS configuration
