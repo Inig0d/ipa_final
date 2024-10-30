@@ -76,14 +76,6 @@ jobs:
             sed -i '' '/win32/d' pubspec.yaml
           fi
 
-      # Forzar la eliminación de win32 en caso de dependencias transitivas
-      - name: Force remove any references to win32
-        run: |
-          if grep -q "win32" pubspec.lock; then
-            echo "Eliminando cualquier referencia a win32 en pubspec.lock..."
-            sed -i '' '/win32/d' pubspec.lock
-          fi
-
       # Elimina el archivo pubspec.lock si existe
       - name: Remove pubspec.lock if exists
         run: |
@@ -95,10 +87,6 @@ jobs:
       # Limpia el proyecto para evitar problemas de caché
       - name: Clean Flutter build
         run: flutter clean
-
-      # Limpia la caché de pub
-      - name: Clean pub cache
-        run: flutter pub cache repair
 
       # Obtiene las dependencias del proyecto
       - name: Get dependencies
@@ -113,12 +101,16 @@ jobs:
           fi
 
       # Compila la app iOS en modo release sin firmar
-      - run: flutter build ios --release --no-codesign
+      - name: Build iOS app
+        run: flutter build ios --release --no-codesign
 
       # Crea el directorio Payload y mueve la app
-      - run: mkdir Payload
+      - name: Create Payload directory
+        run: mkdir Payload
         working-directory: build/ios/iphoneos
-      - run: mv Runner.app Payload
+      
+      - name: Move app to Payload
+        run: mv Runner.app Payload
         working-directory: build/ios/iphoneos
 
       # Comprime los archivos en un archivo IPA
