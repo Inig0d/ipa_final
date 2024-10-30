@@ -10,11 +10,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_html: ^2.2.1
-  # Añade otras dependencias necesarias según tu proyecto
-  cupertino_icons: ^1.0.8      # Agrega esta si usas íconos de Cupertino
-  webview_flutter: ^2.8.0       # Agrega esta si usas WebView
-  video_player: ^2.9.2          # Agrega esta si necesitas reproducir videos
-  flutter_svg: ^0.23.0+1        # Agrega esta si necesitas SVGs
 
 dev_dependencies:
   flutter_test:
