@@ -48,33 +48,15 @@ jobs:
           mkdir -p lib
           mv leerHTML.dart lib/main.dart
 
-      # Mueve el archivo HTML a la carpeta de assets y configura las dependencias
+      # Mueve el archivo HTML a la carpeta de assets
       - name: Move HTML file and update pubspec.yaml
         run: |
           mkdir -p assets/html
           mv mi_carnet_vip_canjear.html assets/html/mi_carnet_vip_canjear.html
-          
-          # Agrega el archivo HTML como un asset en pubspec.yaml si no está presente
-          if ! grep -q "assets/html/mi_carnet_vip_canjear.html" pubspec.yaml; then
-            echo "Configurando assets y entorno en pubspec.yaml..."
-            echo -e "\n  assets:\n    - assets/html/mi_carnet_vip_canjear.html" >> pubspec.yaml
-          fi
 
-      # Añadir constraint de SDK en pubspec.yaml si no existe
-      - name: Add SDK constraint to pubspec.yaml
-        run: |
-          if ! grep -q "^environment:" pubspec.yaml; then
-            echo "Agregando constraint de SDK en pubspec.yaml..."
-            echo -e "environment:\n  sdk: '>=3.0.0 <4.0.0'\n$(cat pubspec.yaml)" > pubspec.yaml
-          fi
-
-      # Elimina la dependencia de `win32` del pubspec.yaml si existe
-      - name: Remove win32 dependency if exists
-        run: |
-          if grep -q "win32" pubspec.yaml; then
-            echo "Eliminando la dependencia win32 del pubspec.yaml..."
-            sed -i '' '/win32/d' pubspec.yaml
-          fi
+      # Limpia el proyecto para evitar problemas de caché
+      - name: Clean Flutter build
+        run: flutter clean
 
       # Elimina el archivo pubspec.lock si existe
       - name: Remove pubspec.lock if exists
@@ -84,33 +66,9 @@ jobs:
             rm pubspec.lock
           fi
 
-      # Limpia el proyecto para evitar problemas de caché
-      - name: Clean Flutter build
-        run: flutter clean
-
       # Obtiene las dependencias del proyecto
       - name: Get dependencies
         run: flutter pub get
-
-      # Mostrar contenido de pubspec.yaml y pubspec.lock para depuración
-      - name: Show pubspec files
-        run: |
-          cat pubspec.yaml
-          if [ -f pubspec.lock ]; then
-            cat pubspec.lock
-          fi
-
-      # Verifica si el proyecto tiene soporte para iOS
-      - name: Verify iOS configuration
-        run: |
-          if [ ! -d ios ]; then
-            echo "Error: La carpeta ios no se encontró, el proyecto no está configurado para iOS."
-            exit 1
-          fi
-
-      # Verifica dependencias y salida de Flutter
-      - name: Check Flutter dependencies
-        run: flutter pub deps
 
       # Compila la app iOS en modo release sin firmar
       - name: Build iOS app
