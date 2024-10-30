@@ -71,12 +71,10 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # Verifica y actualiza el SDK y las dependencias
-      - name: Verify and update SDK
+      # Modifica el archivo de flutter_layout_grid para evitar el error de tipo
+      - name: Fix flutter_layout_grid type error
         run: |
-          dart --version
-          flutter --version
-          flutter pub upgrade --major-versions
+          sed -i '' 's/AbstractNode? node = someRenderObject;/var node = someRenderObject as AbstractNode;/' $HOME/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
 
       # Compila la app iOS en modo release sin firmar
       - name: Build iOS app
