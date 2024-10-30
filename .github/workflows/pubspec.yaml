@@ -28,7 +28,7 @@ jobs:
             echo "Error: leerHTML.dart no encontrado en la raíz del proyecto."
             exit 1
           fi
-          if [ ! -f mi_carnet_vip_canjear.html ]; then
+          if [ ! -f assets/html/mi_carnet_vip_canjear.html ]; then
             echo "Error: mi_carnet_vip_canjear.html no encontrado en la raíz del proyecto."
             exit 1
           fi
@@ -76,15 +76,13 @@ jobs:
             sed -i '' '/win32/d' pubspec.yaml
           fi
 
-      # Forzar la actualización de las dependencias
-      - name: Get dependencies
-        run: |
-          flutter pub get --force
-          flutter pub upgrade
-
-      # Limpia la caché de pub y obtiene las dependencias del proyecto
+      # Limpia la caché de pub
       - name: Clean pub cache
         run: flutter pub cache repair
+
+      # Obtiene las dependencias del proyecto
+      - name: Get dependencies
+        run: flutter pub get
 
       # Verifica si el proyecto tiene soporte para iOS
       - name: Verify iOS configuration
