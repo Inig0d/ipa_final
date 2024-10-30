@@ -20,7 +20,7 @@ jobs:
       # Verifica si los archivos esenciales existen en la raíz del proyecto
       - name: Verify essential files
         run: |
-          if [ ! -f .github/workflows/pubspec.yaml ]; then
+          if [ ! -f pubspec.yaml ]; then
             echo "Error: pubspec.yaml no encontrado en la raíz del proyecto."
             exit 1
           fi
@@ -47,7 +47,7 @@ jobs:
           mv mi_carnet_vip_canjear.html assets/html/mi_carnet_vip_canjear.html
           
           # Agrega el archivo HTML como un asset en pubspec.yaml si no está presente
-          if ! grep -q "assets/html/mi_carnet_vip_canjear.html" .github/workflows/pubspec.yaml; then
+          if ! grep -q "assets/html/mi_carnet_vip_canjear.html" pubspec.yaml; then
             echo "Configurando assets y entorno en pubspec.yaml..."
             sed -i -e '/^flutter:/a\ \ assets:\n\ \ \ \ - assets/html/mi_carnet_vip_canjear.html' pubspec.yaml
           fi
