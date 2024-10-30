@@ -57,7 +57,7 @@ jobs:
           # Agrega el archivo HTML como un asset en pubspec.yaml si no está presente
           if ! grep -q "assets/html/mi_carnet_vip_canjear.html" pubspec.yaml; then
             echo "Configurando assets y entorno en pubspec.yaml..."
-            sed -i -e '/^flutter:/a\ \ assets:\n\ \ \ \ - assets/html/mi_carnet_vip_canjear.html' pubspec.yaml
+            echo -e "\n  assets:\n    - assets/html/mi_carnet_vip_canjear.html" >> pubspec.yaml
           fi
 
       # Añadir constraint de SDK en pubspec.yaml si no existe
@@ -65,7 +65,7 @@ jobs:
         run: |
           if ! grep -q "^environment:" pubspec.yaml; then
             echo "Agregando constraint de SDK en pubspec.yaml..."
-            echo -e "environment:\n  sdk: '>=3.5.0 <4.0.0'\n$(cat pubspec.yaml)" > pubspec.yaml
+            echo -e "environment:\n  sdk: '>=3.0.0 <4.0.0'\n$(cat pubspec.yaml)" > pubspec.yaml
           fi
 
       # Elimina la dependencia de `win32` del pubspec.yaml si existe
