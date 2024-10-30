@@ -88,7 +88,17 @@ jobs:
       - name: Clean Flutter build
         run: flutter clean
 
+      # Obtiene las dependencias del proyecto
+      - name: Get dependencies
+        run: |
+          flutter pub get
+          echo "Dependencias obtenidas con éxito."
 
+      # Muestra las dependencias del proyecto
+      - name: Show project dependencies
+        run: |
+          flutter pub deps
+          echo "Dependencias del proyecto listadas."
 
       # Verifica si el proyecto tiene soporte para iOS
       - name: Verify iOS configuration
@@ -98,9 +108,11 @@ jobs:
             exit 1
           fi
 
-      # Compila la app iOS en modo release sin firmar
+      # Compila la app iOS en modo release sin firmar y muestra la salida
       - name: Build iOS app
-        run: flutter build ios --release --no-codesign
+        run: |
+          flutter build ios --release --no-codesign
+          echo "Compilación de la app iOS completada."
 
       # Crea el directorio Payload y mueve la app
       - name: Create Payload directory
