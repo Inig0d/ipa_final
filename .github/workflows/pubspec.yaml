@@ -14,7 +14,7 @@ jobs:
       # Instala Flutter en una versión estable específica
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.0'  # Versión estable específica
+          flutter-version: '3.10.0'  # Cambia a una versión anterior
           channel: 'stable'
           architecture: x64
 
@@ -71,10 +71,10 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # Modifica el archivo de flutter_layout_grid para hacer un casting explícito y resolver la incompatibilidad
-      - name: Fix flutter_layout_grid type error with explicit cast
+      # Corrige el error de tipo en placement.dart
+      - name: Fix flutter_layout_grid type error
         run: |
-          sed -i '' '82s/\(RenderObject\)/\1 as AbstractNode?/' $HOME/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
+          sed -i '' '82s/\(RenderObject\)/\1 as AbstractNode?/' $HOME/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart || true
 
       # Compila la app iOS en modo release sin firmar
       - name: Build iOS app
