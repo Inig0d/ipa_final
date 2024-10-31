@@ -71,13 +71,16 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # Crea el archivo de parche para flutter_layout_grid
+      # Crea el archivo de parche completo
       - name: Create patch for flutter_layout_grid
         run: |
           cat << 'EOF' > flutter_layout_grid.patch
+          --- a/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
+          +++ b/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
           @@ -82,7 +82,7 @@
-           - AbstractNode? node = someRenderObject;
-           + AbstractNode? node = someRenderObject as AbstractNode?;
+           RenderObject? someRenderObject = ...
+          - AbstractNode? node = someRenderObject;
+          + AbstractNode? node = someRenderObject as AbstractNode?;
           EOF
 
       # Busca el archivo placement.dart y aplica el parche
