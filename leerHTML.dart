@@ -20,13 +20,19 @@ class _MyAppState extends State<MyApp> {
     _loadHtmlFromAssets();
   }
 
-  // Cargar el archivo HTML desde assets
   Future<void> _loadHtmlFromAssets() async {
-    // Cambia aquí si decides renombrar el archivo
-    String fileContent = await rootBundle.loadString('assets/html/mi_carnet_vip_canjear.html');
-    setState(() {
-      _htmlContent = fileContent;
-    });
+    try {
+      String fileContent = await rootBundle.loadString('assets/html/mi_carnet_vip_canjear.html');
+      setState(() {
+        _htmlContent = fileContent;
+      });
+      print(_htmlContent); // Imprimir para depuración
+    } catch (e) {
+      print("Error loading HTML file: $e");
+      setState(() {
+        _htmlContent = "Error loading HTML content.";
+      });
+    }
   }
 
   @override
