@@ -71,12 +71,12 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # Crea el archivo de parche para flutter_layout_grid
+      # Espera a que se descarguen las dependencias y luego crea el parche
       - name: Create patch for flutter_layout_grid
         run: |
           cat << 'EOF' > flutter_layout_grid.patch
-          --- a/lib/src/widgets/placement.dart
-          +++ b/lib/src/widgets/placement.dart
+          --- .pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
+          +++ .pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
           @@ -82 +82 @@
           - AbstractNode? node = someRenderObject;
           + AbstractNode? node = someRenderObject as AbstractNode?;
@@ -84,7 +84,7 @@ jobs:
 
       # Aplica el parche al archivo de flutter_layout_grid
       - name: Apply patch for flutter_layout_grid
-        run: patch -p1 < flutter_layout_grid.patch
+        run: patch -p0 < flutter_layout_grid.patch
 
       # Compila la app iOS en modo release sin firmar
       - name: Build iOS app
