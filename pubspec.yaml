@@ -10,9 +10,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_html: ^2.2.1
-  flutter_layout_grid: ^1.0.8  # Cambia a la última versión estable
-  flutter_math_fork: ^0.5.0     # Verifica si hay una versión más reciente
-  win32: ^3.1.4                 # Especifica la versión para garantizar compatibilidad
+  flutter_layout_grid: ^1.1.0  # Actualiza a la versión más reciente
+  flutter_math_fork: ^0.5.0  # O la versión que necesites
+  win32: ^3.1.4  # Especifica la versión para garantizar compatibilidad
 
 dev_dependencies:
   flutter_test:
