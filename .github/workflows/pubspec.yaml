@@ -71,10 +71,9 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # Modifica el archivo de flutter_layout_grid para hacer un casting explícito y resolver la incompatibilidad
-      - name: Fix flutter_layout_grid type error with explicit cast
-        run: |
-          sed -i '' '82s/\(RenderObject\)/\1 as AbstractNode?/' $HOME/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
+      # Aplica el parche al archivo de flutter_layout_grid
+      - name: Apply patch for flutter_layout_grid
+        run: patch -p1 < flutter_layout_grid.patch
 
       # Compila la app iOS en modo release sin firmar
       - name: Build iOS app
