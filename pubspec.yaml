@@ -3,6 +3,7 @@ description: A Flutter project to render HTML files.
 
 version: 1.0.0+1
 
+# Asegúrate de que el rango de versión sea compatible con las dependencias
 environment:
   sdk: ">=2.17.0 <4.0.0"  # Versión mínima para UnmodifiableUint8ListView
 
@@ -10,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_html: ^2.2.1
-  flutter_math_fork: ^0.4.0  # O la versión que necesites
+  flutter_math_fork: ^0.5.0  # Cambia a la versión más reciente
   win32: ^3.1.4  # Especifica la versión para garantizar compatibilidad
 
 dev_dependencies:
