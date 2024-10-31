@@ -14,7 +14,7 @@ jobs:
       # Instala Flutter en una versión estable específica
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.0'
+          flutter-version: '3.13.0'  # Versión estable específica
           channel: 'stable'
           architecture: x64
 
@@ -43,7 +43,7 @@ jobs:
             flutter create .
           fi
 
-      # Mueve `leerHTML.dart` a `lib/main.dart`
+      # Mueve leerHTML.dart a lib/main.dart
       - name: Set leerHTML.dart as main file
         run: |
           mkdir -p lib
@@ -71,30 +71,11 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # Crea el archivo de parche completo
-      - name: Create patch for flutter_layout_grid
+# Modifica el archivo de flutter_layout_grid para hacer un casting explícito y resolver la incompatibilidad
+      - name: Fix flutter_layout_grid type error with explicit cast
         run: |
-          cat << 'EOF' > flutter_layout_grid.patch
-          --- a/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
-          +++ b/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
-          @@ -82,7 +82,7 @@
-           RenderObject? someRenderObject = ...
-          - AbstractNode? node = someRenderObject;
-          + AbstractNode? node = someRenderObject as AbstractNode?;
-          EOF
-
-      # Busca el archivo placement.dart y aplica el parche
-      - name: Locate and apply patch
-        run: |
-          # Encuentra la ruta exacta del archivo placement.dart
-          FILE_PATH=$(find $HOME/.pub-cache -type f -path "*/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart")
-          if [ -z "$FILE_PATH" ]; then
-            echo "Error: No se encontró el archivo placement.dart en flutter_layout_grid."
-            exit 1
-          else
-            echo "Aplicando parche a $FILE_PATH"
-            patch "$FILE_PATH" < flutter_layout_grid.patch
-          fi
+          sed -i '' '82s/\(RenderObject\)/\1 as AbstractNode?/' $HOME/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
+          sed -i '' 's/(RenderObject as AbstractNode?)/(\(RenderObject as AbstractNode?\))/' $HOME/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
 
       # Compila la app iOS en modo release sin firmar
       - name: Build iOS app
