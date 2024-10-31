@@ -55,6 +55,15 @@ jobs:
           mkdir -p assets/html
           mv mi_carnet_vip_canjear.html assets/html/mi_carnet_vip_canjear.html
 
+      # Mueve las carpetas necesarias a la carpeta de assets
+      - name: Move required HTML folders to assets
+        run: |
+          mkdir -p assets/html/Mi_carnet_VIP_Canjear_Carnet_VIP_de_Kandhavia_files
+          mv Mi_carnet_VIP_Canjear_Carnet_VIP_de_Kandhavia_files/* assets/html/Mi_carnet_VIP_Canjear_Carnet_VIP_de_Kandhavia_files/
+
+          mkdir -p assets/html/img
+          mv img/* assets/html/img/
+
       # Limpia el proyecto para evitar problemas de caché
       - name: Clean Flutter build
         run: flutter clean
