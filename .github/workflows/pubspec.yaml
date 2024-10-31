@@ -55,14 +55,29 @@ jobs:
           mkdir -p assets/html
           mv mi_carnet_vip_canjear.html assets/html/mi_carnet_vip_canjear.html
 
+      # Verifica si la carpeta necesaria existe
+      - name: Verify essential HTML folders
+        run: |
+          if [ -d "mi_carnet_vip_canjear_files" ]; then
+            echo "La carpeta mi_carnet_vip_canjear_files existe."
+          else
+            echo "Error: La carpeta mi_carnet_vip_canjear_files no existe."
+            exit 1
+          fi
+
       # Mueve las carpetas necesarias a la carpeta de assets
       - name: Move required HTML folders to assets
         run: |
-          mkdir -p assets/html/Mi_carnet_VIP_Canjear_Carnet_VIP_de_Kandhavia_files
-          mv Mi_carnet_VIP_Canjear_Carnet_VIP_de_Kandhavia_files/* assets/html/Mi_carnet_VIP_Canjear_Carnet_VIP_de_Kandhavia_files/
-
+          mkdir -p assets/html/mi_carnet_vip_canjear_files
+          mv mi_carnet_vip_canjear_files/* assets/html/mi_carnet_vip_canjear_files/
+    
           mkdir -p assets/html/img
-          mv img/* assets/html/img/
+          if [ -d "img" ]; then
+            mv img/* assets/html/img/
+          else
+            echo "Error: La carpeta img no existe."
+            exit 1
+          fi
 
       # Limpia el proyecto para evitar problemas de caché
       - name: Clean Flutter build
@@ -81,7 +96,6 @@ jobs:
         run: flutter pub get
 
       # (Opcional) Corrige errores de tipo específicos si es necesario
-      # Esto es solo si encuentras errores conocidos en las dependencias
       - name: Fix flutter_math_fork type error
         run: |
           sed -i '' '186s/\(TapDownDetails\)/TapDragDownDetails/' $HOME/.pub-cache/hosted/pub.dev/flutter_math_fork-0.5.0/lib/src/widgets/selection/gesture_detector_builder.dart || true
