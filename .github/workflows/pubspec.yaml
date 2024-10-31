@@ -1,0 +1,115 @@
+name: iOS-ipa-build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    name: 🎉 iOS Build
+    runs-on: macos-latest
+    steps:
+      # Clona el repositorio
+      - uses: actions/checkout@v3
+
+      # Instala Flutter en una versión estable específica
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.0'
+          channel: 'stable'
+          architecture: x64
+
+      # Verifica si los archivos esenciales existen en la raíz del proyecto
+      - name: Verify essential files
+        run: |
+          if [ ! -f pubspec.yaml ]; then
+            echo "Error: pubspec.yaml no encontrado en la raíz del proyecto."
+            exit 1
+          fi
+          if [ ! -f leerHTML.dart ]; then
+            echo "Error: leerHTML.dart no encontrado en la raíz del proyecto."
+            exit 1
+          fi
+          if [ ! -f mi_carnet_vip_canjear.html ]; then
+            echo "Error: mi_carnet_vip_canjear.html no encontrado en la raíz del proyecto."
+            exit 1
+          fi
+          echo "Todos los archivos esenciales están en su lugar."
+
+      # Crea el proyecto si no tiene la carpeta ios
+      - name: Create Flutter project if not exists
+        run: |
+          if [ ! -d ios ]; then
+            echo "La carpeta ios no se encontró. Creando la estructura de proyecto Flutter..."
+            flutter create .
+          fi
+
+      # Mueve leerHTML.dart a lib/main.dart
+      - name: Set leerHTML.dart as main file
+        run: |
+          mkdir -p lib
+          mv leerHTML.dart lib/main.dart
+
+      # Mueve el archivo HTML a la carpeta de assets
+      - name: Move HTML file and update pubspec.yaml
+        run: |
+          mkdir -p assets/html
+          mv mi_carnet_vip_canjear.html assets/html/mi_carnet_vip_canjear.html
+
+      # Mueve las carpetas necesarias a la carpeta de assets
+      - name: Move required HTML folders to assets
+        run: |
+          mkdir -p assets/html/Mi_carnet_VIP_Canjear_Carnet_VIP_de_Kandhavia_files
+          mv Mi_carnet_VIP_Canjear_Carnet_VIP_de_Kandhavia_files/* assets/html/Mi_carnet_VIP_Canjear_Carnet_VIP_de_Kandhavia_files/
+
+          mkdir -p assets/html/img
+          mv img/* assets/html/img/
+
+      # Limpia el proyecto para evitar problemas de caché
+      - name: Clean Flutter build
+        run: flutter clean
+
+      # Elimina el archivo pubspec.lock si existe
+      - name: Remove pubspec.lock if exists
+        run: |
+          if [ -f pubspec.lock ]; then
+            echo "Eliminando pubspec.lock para regenerarlo..."
+            rm pubspec.lock
+          fi
+
+      # Obtiene las dependencias del proyecto
+      - name: Get dependencies
+        run: flutter pub get
+
+      # (Opcional) Corrige errores de tipo específicos si es necesario
+      # Esto es solo si encuentras errores conocidos en las dependencias
+      - name: Fix flutter_math_fork type error
+        run: |
+          sed -i '' '186s/\(TapDownDetails\)/TapDragDownDetails/' $HOME/.pub-cache/hosted/pub.dev/flutter_math_fork-0.5.0/lib/src/widgets/selection/gesture_detector_builder.dart || true
+
+      # Compila la app iOS en modo release sin firmar
+      - name: Build iOS app
+        run: flutter build ios --release --no-codesign
+
+      # Crea el directorio Payload y mueve la app
+      - name: Create Payload directory
+        run: mkdir Payload
+        working-directory: build/ios/iphoneos
+
+      - name: Move app to Payload
+        run: mv Runner.app Payload
+        working-directory: build/ios/iphoneos
+
+      # Comprime los archivos en un archivo IPA
+      - name: Zip output
+        run: zip -qq -r -9 FlutterIpaExport.ipa Payload
+        working-directory: build/ios/iphoneos
+
+      # Sube el archivo IPA a la sección de releases
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/ios/iphoneos/FlutterIpaExport.ipa
+          tag: v1.0
+          overwrite: true
+          body: "This is the first release of the HTML renderer app."
