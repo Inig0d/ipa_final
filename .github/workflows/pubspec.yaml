@@ -71,12 +71,6 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # Actualiza el archivo placement.dart en caso de error de tipo
-      - name: Fix flutter_layout_grid type error
-        run: |
-          sed -i '' '82s/\(RenderObject\)/\1 as AbstractNode?/' $HOME/.pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart || true
-          echo "Corrección aplicada en placement.dart"
-
       # Corrige el error de tipo en gesture_detector_builder.dart
       - name: Fix flutter_math_fork type error
         run: |
@@ -90,7 +84,7 @@ jobs:
       - name: Create Payload directory
         run: mkdir Payload
         working-directory: build/ios/iphoneos
-      
+
       - name: Move app to Payload
         run: mv Runner.app Payload
         working-directory: build/ios/iphoneos
