@@ -14,7 +14,7 @@ jobs:
       # Instala Flutter en una versión estable específica
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.10.0'  # Cambia a una versión anterior
+          flutter-version: '3.13.0'  # Cambia a una versión anterior si es necesario
           channel: 'stable'
           architecture: x64
 
@@ -79,7 +79,7 @@ jobs:
       # Corrige el error de tipo en gesture_detector_builder.dart
       - name: Fix flutter_math_fork type error
         run: |
-          sed -i '' '186s/\(TapDownDetails\)/TapDragDownDetails/' $HOME/.pub-cache/hosted/pub.dev/flutter_math_fork-0.5.0/lib/src/widgets/selection/gesture_detector_builder.dart || true
+          sed -i '' '186s/\(TapDownDetails\)/TapDragDownDetails/' $HOME/.pub-cache/hosted/pub.dev/flutter_math_fork-0.4.2+2/lib/src/widgets/selection/gesture_detector_builder.dart || true
 
       # Compila la app iOS en modo release sin firmar
       - name: Build iOS app
