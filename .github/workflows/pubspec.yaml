@@ -14,7 +14,7 @@ jobs:
       # Instala Flutter en una versión estable específica
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.0'  # Versión estable específica
+          flutter-version: '3.13.0'
           channel: 'stable'
           architecture: x64
 
@@ -71,20 +71,27 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # Espera a que se descarguen las dependencias y luego crea el parche
+      # Crea el archivo de parche para flutter_layout_grid
       - name: Create patch for flutter_layout_grid
         run: |
           cat << 'EOF' > flutter_layout_grid.patch
-          --- .pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
-          +++ .pub-cache/hosted/pub.dev/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart
-          @@ -82 +82 @@
-          - AbstractNode? node = someRenderObject;
-          + AbstractNode? node = someRenderObject as AbstractNode?;
+          @@ -82,7 +82,7 @@
+           - AbstractNode? node = someRenderObject;
+           + AbstractNode? node = someRenderObject as AbstractNode?;
           EOF
 
-      # Aplica el parche al archivo de flutter_layout_grid
-      - name: Apply patch for flutter_layout_grid
-        run: patch -p0 < flutter_layout_grid.patch
+      # Busca el archivo placement.dart y aplica el parche
+      - name: Locate and apply patch
+        run: |
+          # Encuentra la ruta exacta del archivo placement.dart
+          FILE_PATH=$(find $HOME/.pub-cache -type f -path "*/flutter_layout_grid-1.0.6/lib/src/widgets/placement.dart")
+          if [ -z "$FILE_PATH" ]; then
+            echo "Error: No se encontró el archivo placement.dart en flutter_layout_grid."
+            exit 1
+          else
+            echo "Aplicando parche a $FILE_PATH"
+            patch "$FILE_PATH" < flutter_layout_grid.patch
+          fi
 
       # Compila la app iOS en modo release sin firmar
       - name: Build iOS app
