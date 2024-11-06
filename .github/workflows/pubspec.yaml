@@ -30,7 +30,15 @@ jobs:
             exit 1
           fi
 
-      # Opcional: Mueve el archivo HTML a la carpeta de assets solo si está en raíz
+      # Crear la carpeta lib si no existe y mover leerHTML.dart a lib/main.dart
+      - name: Set leerHTML.dart as main file
+        run: |
+          mkdir -p lib
+          if [ ! -f lib/main.dart ]; then
+            mv leerHTML.dart lib/main.dart
+          fi
+
+      # Mueve el archivo HTML a la carpeta de assets solo si está en raíz
       - name: Move HTML file if in root (optional)
         run: |
           if [ -f mi_carnet_vip_canjear.html ]; then
@@ -71,6 +79,14 @@ jobs:
       - name: Fix flutter_math_fork type error
         run: |
           sed -i '' '186s/\(TapDownDetails\)/TapDragDownDetails/' $HOME/.pub-cache/hosted/pub.dev/flutter_math_fork-0.5.0/lib/src/widgets/selection/gesture_detector_builder.dart || true
+
+      # Verifica que lib/main.dart exista antes de compilar
+      - name: Check if lib/main.dart exists
+        run: |
+          if [ ! -f lib/main.dart ]; then
+            echo "Error: lib/main.dart no encontrado. Asegúrate de que leerHTML.dart se ha movido correctamente."
+            exit 1
+          fi
 
       # Compila la app iOS en modo release sin firmar
       - name: Build iOS app
