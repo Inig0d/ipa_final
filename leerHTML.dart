@@ -26,11 +26,11 @@ class _MyAppState extends State<MyApp> {
       setState(() {
         _htmlContent = fileContent;
       });
-      print(_htmlContent); // Imprimir para depuración
+      print("Contenido HTML cargado exitosamente: $_htmlContent");
     } catch (e) {
-      print("Error loading HTML file: $e");
+      print("Error al cargar el archivo HTML: $e");
       setState(() {
-        _htmlContent = "Error loading HTML content.";
+        _htmlContent = "Error al cargar el contenido HTML.";
       });
     }
   }
