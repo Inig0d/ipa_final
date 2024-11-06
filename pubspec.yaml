@@ -22,4 +22,4 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/html/mi_carnet_vip_canjear.html  # Asegúrate de que el archivo HTML existe en esta ruta
+    - assets/html/mi_carnet_vip_canjear.html
