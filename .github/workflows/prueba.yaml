@@ -20,4 +20,4 @@ jobs:
         run: flutter pub get
 
       - name: Run load_html_test.dart
-        run: flutter load_html_test.dart
+        run: flutter test load_html_test.dart  # Ejecuta el archivo en el directorio principal
