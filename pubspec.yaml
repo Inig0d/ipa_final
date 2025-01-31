@@ -1,25 +1,134 @@
-name: KandaviaVIP
-description: A Flutter project to render HTML files.
+name: iOS-ipa-build
 
-version: 1.0.0+1
+on:
+  workflow_dispatch:
 
-environment:
-  sdk: ">=2.17.0 <4.0.0"  # Asegúrate de que esta versión sea compatible con tus dependencias
+jobs:
+  build-ios:
+    name: 🎉 iOS Build
+    runs-on: macos-latest
+    steps:
+      # Clona el repositorio
+      - uses: actions/checkout@v3
 
-dependencies:
-  flutter:
-    sdk: flutter
-  flutter_html: ^3.0.0-beta.2
-  flutter_layout_grid: ^2.0.7
-  flutter_math_fork: ^0.5.0
-  win32: ^3.1.4
+      # Instala Flutter en una versión estable específica
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.0'
+          channel: 'stable'
+          architecture: x64
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
+      # Verifica si los archivos esenciales existen en la raíz del proyecto
+      - name: Verify essential files
+        run: |
+          if [ ! -f pubspec.yaml ]; then
+            echo "Error: pubspec.yaml no encontrado en la raíz del proyecto."
+            exit 1
+          fi
+          if [ ! -f leerHTML.dart ]; then
+            echo "Error: leerHTML.dart no encontrado en la raíz del proyecto."
+            exit 1
+          fi
 
-flutter:
-  uses-material-design: true
+      # Crear la carpeta lib si no existe y mover leerHTML.dart a lib/main.dart
+      - name: Set leerHTML.dart as main file
+        run: |
+          mkdir -p lib
+          if [ ! -f lib/main.dart ]; then
+            mv leerHTML.dart lib/main.dart
+          fi
 
-  assets:
-    - assets/html/mi_carnet_vip_canjear.html
+      # Mueve el archivo HTML a la carpeta de assets solo si está en raíz
+      - name: Move HTML file if in root (optional)
+        run: |
+          if [ -f mi_carnet_vip_canjear.html ]; then
+            mkdir -p assets/html
+            mv mi_carnet_vip_canjear.html assets/html/mi_carnet_vip_canjear.html
+          fi
+
+      # Verifica si las carpetas opcionales existen y mueve los archivos si es necesario
+      - name: Move required HTML folders to assets if they exist
+        run: |
+          mkdir -p assets/html/mi_carnet_vip_canjear_files
+          if [ -d "mi_carnet_vip_canjear_files" ]; then
+            mv mi_carnet_vip_canjear_files/* assets/html/mi_carnet_vip_canjear_files/
+          fi
+          mkdir -p assets/html/img
+          if [ -d "img" ]; then
+            mv img/* assets/html/img/
+          fi
+
+      # Limpia el proyecto para evitar problemas de caché
+      - name: Clean Flutter build
+        run: flutter clean
+
+      # Elimina el archivo pubspec.lock si existe
+      - name: Remove pubspec.lock if exists
+        run: |
+          if [ -f pubspec.lock ]; then
+            echo "Eliminando pubspec.lock para regenerarlo..."
+            rm pubspec.lock
+          fi
+
+      # Obtiene las dependencias del proyecto
+      - name: Get dependencies
+        run: flutter pub get
+
+      # (Opcional) Corrige errores de tipo específicos si es necesario
+      - name: Fix flutter_math_fork type error
+        run: |
+          sed -i '' '186s/\(TapDownDetails\)/TapDragDownDetails/' $HOME/.pub-cache/hosted/pub.dev/flutter_math_fork-0.5.0/lib/src/widgets/selection/gesture_detector_builder.dart || true
+
+      # Verifica que lib/main.dart exista antes de compilar
+      - name: Check if lib/main.dart exists
+        run: |
+          if [ ! -f lib/main.dart ]; then
+            echo "Error: lib/main.dart no encontrado. Asegúrate de que leerHTML.dart se ha movido correctamente."
+            exit 1
+          fi
+
+      # Instala CocoaPods (necesario para dependencias de iOS)
+      - name: Install CocoaPods
+        run: |
+          sudo gem install cocoapods
+          pod setup
+
+      # Ejecuta `flutter create .` para generar los archivos de iOS si no existen
+      - name: Generate iOS files if missing
+        run: |
+          if [ ! -d "ios" ]; then
+            flutter create .
+          fi
+
+      # Abre el proyecto en Xcode para asegurar que esté configurado correctamente
+      - name: Open Xcode project to ensure configuration
+        run: |
+          open ios/Runner.xcworkspace || true
+
+      # Compila la app iOS en modo release sin firmar
+      - name: Build iOS app
+        run: flutter build ios --release --no-codesign
+
+      # Crea el directorio Payload y mueve la app
+      - name: Create Payload directory
+        run: mkdir Payload
+        working-directory: build/ios/iphoneos
+
+      - name: Move app to Payload
+        run: mv Runner.app Payload
+        working-directory: build/ios/iphoneos
+
+      # Comprime los archivos en un archivo IPA
+      - name: Zip output
+        run: zip -qq -r -9 FlutterIpaExport.ipa Payload
+        working-directory: build/ios/iphoneos
+
+      # Sube el archivo IPA a la sección de releases
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/ios/iphoneos/FlutterIpaExport.ipa
+          tag: v1.0
+          overwrite: true
+          body: "This is the first release of the HTML renderer app."
