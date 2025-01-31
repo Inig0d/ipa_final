@@ -5,7 +5,7 @@ on:
 
 jobs:
   build-ios:
-    name: 🎉 iOS Build
+    name: "🎉 iOS Build"
     runs-on: macos-latest
     steps:
       # Clona el repositorio
