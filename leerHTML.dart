@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
     } catch (e) {
       print("Error al cargar el archivo HTML: $e");
       setState(() {
-        _htmlContent = "Error al cargar el contenido HTML.";
+        _htmlContent = "<p>Error al cargar el contenido HTML.</p>";
       });
     }
   }
@@ -40,12 +40,21 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Render HTML desde archivo'),
+          title: Text('Mi Carnet VIP'), // Título personalizado
         ),
         body: SingleChildScrollView(
           child: _htmlContent.isNotEmpty
               ? Html(data: _htmlContent)
-              : Center(child: CircularProgressIndicator()),
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 16),
+                      Text("Cargando contenido..."),
+                    ],
+                  ),
+                ),
         ),
       ),
     );
