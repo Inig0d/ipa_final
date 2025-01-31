@@ -5,7 +5,7 @@ on:
 
 jobs:
   build-ios:
-    name: "🎉 iOS Build"
+    name: 🎉 iOS Build
     runs-on: macos-latest
     steps:
       # Clona el repositorio
@@ -29,34 +29,54 @@ jobs:
             echo "Error: leerHTML.dart no encontrado en la raíz del proyecto."
             exit 1
           fi
+          if [ ! -f mi_carnet_vip_canjear.html ]; then
+            echo "Error: mi_carnet_vip_canjear.html no encontrado en la raíz del proyecto."
+            exit 1
+          fi
+          echo "Todos los archivos esenciales están en su lugar."
 
-      # Crear la carpeta lib si no existe y mover leerHTML.dart a lib/main.dart
+      # Crea el proyecto si no tiene la carpeta ios
+      - name: Create Flutter project if not exists
+        run: |
+          if [ ! -d ios ]; then
+            echo "La carpeta ios no se encontró. Creando la estructura de proyecto Flutter..."
+            flutter create .
+          fi
+
+      # Mueve leerHTML.dart a lib/main.dart
       - name: Set leerHTML.dart as main file
         run: |
           mkdir -p lib
-          if [ ! -f lib/main.dart ]; then
-            mv leerHTML.dart lib/main.dart
-          fi
+          mv leerHTML.dart lib/main.dart
 
-      # Mueve el archivo HTML a la carpeta de assets solo si está en raíz
-      - name: Move HTML file if in root (optional)
+      # Mueve el archivo HTML a la carpeta de assets
+      - name: Move HTML file and update pubspec.yaml
         run: |
-          if [ -f mi_carnet_vip_canjear.html ]; then
-            mkdir -p assets/html
-            mv mi_carnet_vip_canjear.html assets/html/mi_carnet_vip_canjear.html
+          mkdir -p assets/html
+          mv mi_carnet_vip_canjear.html assets/html/mi_carnet_vip_canjear.html
+
+      # Verifica si la carpeta necesaria existe
+      - name: Verify essential HTML folders
+        run: |
+          if [ -d "mi_carnet_vip_canjear_files" ]; then
+            echo "La carpeta mi_carnet_vip_canjear_files existe."
+          else
+            echo "Error: La carpeta mi_carnet_vip_canjear_files no existe."
+            exit 1
           fi
 
-      # Verifica si las carpetas opcionales existen y mueve los archivos si es necesario
-      - name: Move required HTML folders to assets if they exist
+      # Mueve las carpetas necesarias a la carpeta de assets
+      - name: Move required HTML folders to assets
         run: |
           mkdir -p assets/html/mi_carnet_vip_canjear_files
-          if [ -d "mi_carnet_vip_canjear_files" ]; then
-            mv mi_carnet_vip_canjear_files/* assets/html/mi_carnet_vip_canjear_files/
-          fi
-
+          mv mi_carnet_vip_canjear_files/* assets/html/mi_carnet_vip_canjear_files/
+    
           mkdir -p assets/html/img
           if [ -d "img" ]; then
             mv img/* assets/html/img/
+          else
+            echo "Error: La carpeta img no existe."
+            exit 1
           fi
 
       # Limpia el proyecto para evitar problemas de caché
@@ -79,14 +99,6 @@ jobs:
       - name: Fix flutter_math_fork type error
         run: |
           sed -i '' '186s/\(TapDownDetails\)/TapDragDownDetails/' $HOME/.pub-cache/hosted/pub.dev/flutter_math_fork-0.5.0/lib/src/widgets/selection/gesture_detector_builder.dart || true
-
-      # Verifica que lib/main.dart exista antes de compilar
-      - name: Check if lib/main.dart exists
-        run: |
-          if [ ! -f lib/main.dart ]; then
-            echo "Error: lib/main.dart no encontrado. Asegúrate de que leerHTML.dart se ha movido correctamente."
-            exit 1
-          fi
 
       # Compila la app iOS en modo release sin firmar
       - name: Build iOS app
